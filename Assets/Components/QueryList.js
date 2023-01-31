@@ -45,15 +45,15 @@ const QueryList = ({searchPhrase, setClicked, data}) => {
     }
     let titleList = data.filter(val => {
       return (
-      val.title
-        .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, '')) ||
+        val.title
+          .toUpperCase()
+          .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, '')) ||
         val.artist
           .toUpperCase()
           .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
-      )
+      );
     });
-    console.log("title list ", titleList);
+    console.log('title list ', titleList);
     setList(titleList);
   };
 
@@ -97,6 +97,7 @@ const QueryList = ({searchPhrase, setClicked, data}) => {
       keyExtractor: item => item.id,
       //   style: {backgroundColor: 'red'},
       extraData: data,
+      keyboardShouldPersistTaps: 'handled',
     },
     CateFlatList: {
       horizontal: true,

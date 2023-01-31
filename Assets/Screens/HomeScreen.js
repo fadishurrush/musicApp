@@ -1,7 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
-  Image,
   ImageBackground,
   StyleSheet,
   Text,
@@ -12,12 +11,14 @@ import {Catagories} from '../Data/Catagories';
 import {SIZES, FONTS, COLORS} from '../Data/Dimentions';
 import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import TrackPlayer, {State} from 'react-native-track-player';
+import TrackPlayer, {
+  AppKilledPlaybackBehavior,
+  Capability,
+  State,
+} from 'react-native-track-player';
 import ImageCard from '../Components/ImageCard';
 import {Songs as SongsArray} from '../Data/Songs';
 import {ScreenNames} from '../Data/ScreenNames';
-import {COntroller} from '../Components/Controller';
-import MusicContext from '../../store/MusicContext';
 
 export const Homescreen = ({navigation}) => {
   const [catagories, setCategories] = useState(Catagories);
@@ -55,7 +56,22 @@ export const Homescreen = ({navigation}) => {
     const isServiceRunning = await TrackPlayer.isServiceRunning();
     if (!isServiceRunning) {
       await TrackPlayer.setupPlayer();
-      await TrackPlayer.reset();
+      await TrackPlayer.updateOptions({
+        // AppKilledPlaybackBehavior: AppKilledPlaybackBehavior.PausePlayback,
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+          Capability.Stop,
+        ],
+        notificationCapabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+        ],
+      });
       setIsTrackerReady(true);
     } else {
       console.log('is running');

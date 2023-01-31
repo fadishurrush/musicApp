@@ -1,4 +1,11 @@
-module.exports = async function() {
-    // This service needs to be registered for the module to work
-    // but it will be used later in the "Receiving Events" section
-}
+const {default: TrackPlayer} = require('react-native-track-player');
+
+module.exports = async function () {
+  // This service needs to be registered for the module to work
+  // but it will be used later in the "Receiving Events" section
+
+  TrackPlayer.addEventListener('remote-play', () => TrackPlayer.play());
+  TrackPlayer.addEventListener('remote-pause', () => TrackPlayer.pause());
+  TrackPlayer.addEventListener('remote-Next', () => TrackPlayer.pause());
+  TrackPlayer.addEventListener('remote-Previous', () => TrackPlayer.pause());
+};

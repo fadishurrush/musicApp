@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -19,7 +19,7 @@ import {COLORS, FONTS} from '../Data/Dimentions';
 import MusicModalComp from './MusicModalComp';
 
 const MiniPlayer = () => {
-  const {isPlaying, setIsPlaying, currentTrack,modalVisible,setModalVisible} =
+  const {isPlaying, setIsPlaying, currentTrack, modalVisible, setModalVisible} =
     useContext(MusicContext);
   const playbackState = usePlaybackState();
   const {position, duration} = useProgress();
@@ -37,6 +37,9 @@ const MiniPlayer = () => {
       await playTrack();
     }
   };
+  useEffect(() => {
+    setIsPlaying(playbackState);
+  }, [playbackState]);
 
   const playerModes = {
     loading: <ActivityIndicator size={30} />,
@@ -63,7 +66,7 @@ const MiniPlayer = () => {
     return (position / duration) * 100;
   };
   return (
-    <View style={styles.container}  >
+    <View style={styles.container}>
       <Modal
         animationType="slide"
         transparent={true}
@@ -71,10 +74,11 @@ const MiniPlayer = () => {
         onRequestClose={() => {
           setModalVisible(!modalVisible);
         }}>
-          
-        <MusicModalComp/>
+        <MusicModalComp />
       </Modal>
-      <Pressable style={{flex:1}} onPress={() => setModalVisible(!modalVisible)}>
+      <Pressable
+        style={{flex: 1}}
+        onPress={() => setModalVisible(!modalVisible)}>
         <View style={[styles.progress, {width: `${getProgress()}%`}]} />
         <View style={styles.row}>
           <Image style={styles.image} source={currentTrack?.artwork} />
@@ -109,8 +113,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.darkgray,
     borderBottomWidth: 2,
     borderBottomColor: 'black',
-  
-    
   },
   row: {
     flexDirection: 'row',
