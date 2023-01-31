@@ -12,7 +12,6 @@ const tab = createBottomTabNavigator();
 
 const BottomTabNav = () => {
   return (
-    <NavigationContainer>
       <tab.Navigator screenOptions={({ route }) => ({
             tabBarStyle:{
                 backgroundColor:'black',
@@ -44,7 +43,6 @@ const BottomTabNav = () => {
         {/* <tab.Screen name={Profile} component={StackNav} /> */}
         {/* <tab.Screen name={Settings} component={StackNav} /> */}
       </tab.Navigator>
-    </NavigationContainer>
   );
 };
 

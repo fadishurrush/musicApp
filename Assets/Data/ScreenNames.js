@@ -5,4 +5,6 @@ export const ScreenNames = {
   HomeStackNav: 'Home',
   Search: 'Search',
   History: 'history',
+  AfterSplashScreen: 'AfterSplashScreen',
+  Splash: 'SplashScreen',
 };

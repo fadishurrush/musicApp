@@ -63,7 +63,7 @@ const MiniPlayer = () => {
     return (position / duration) * 100;
   };
   return (
-    <View style={styles.container}>
+    <View style={styles.container}  >
       <Modal
         animationType="slide"
         transparent={true}
@@ -104,10 +104,13 @@ const styles = StyleSheet.create({
     height: '7%',
     width: '100%',
     position: 'absolute',
-    bottom: '5.03%',
+    bottom: '5%',
+    // bottom: -100,
     backgroundColor: COLORS.darkgray,
     borderBottomWidth: 2,
     borderBottomColor: 'black',
+  
+    
   },
   row: {
     flexDirection: 'row',
