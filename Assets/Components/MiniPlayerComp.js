@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Modal,
 } from 'react-native';
 import TrackPlayer, {
   usePlaybackState,
@@ -15,9 +16,10 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import MusicContext from '../../store/MusicContext';
 import {COLORS, FONTS} from '../Data/Dimentions';
+import MusicModalComp from './MusicModalComp';
 
 const MiniPlayer = () => {
-  const {isPlaying, setIsPlaying, currentTrack, setCurrentTrack} =
+  const {isPlaying, setIsPlaying, currentTrack,modalVisible,setModalVisible} =
     useContext(MusicContext);
   const playbackState = usePlaybackState();
   const {position, duration} = useProgress();
@@ -61,27 +63,39 @@ const MiniPlayer = () => {
     return (position / duration) * 100;
   };
   return (
-    <Pressable style={styles.container}>
-      <View style={[styles.progress, {width: `${getProgress()}%`}]} />
-      <View style={styles.row}>
-        <Image style={styles.image} source={currentTrack?.artwork} />
-        <View style={styles.text}>
-          <Text style={styles.songname}>{currentTrack?.title}</Text>
-          <Octicons name={'dot-fill'} size={10} color={'white'} />
-          <Text style={styles.songartist}>{currentTrack?.artist}</Text>
+    <View style={styles.container}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+          
+        <MusicModalComp/>
+      </Modal>
+      <Pressable style={{flex:1}} onPress={() => setModalVisible(!modalVisible)}>
+        <View style={[styles.progress, {width: `${getProgress()}%`}]} />
+        <View style={styles.row}>
+          <Image style={styles.image} source={currentTrack?.artwork} />
+          <View style={styles.text}>
+            <Text style={styles.songname}>{currentTrack?.title}</Text>
+            <Octicons name={'dot-fill'} size={10} color={'white'} />
+            <Text style={styles.songartist}>{currentTrack?.artist}</Text>
+          </View>
+          <View style={styles.PressableHolder}>
+            <Pressable style={styles.Pressable}>
+              <IonIcon style={styles.icon} name="heart" color="red" size={30} />
+            </Pressable>
+            <Pressable
+              style={styles.Pressable}
+              onPress={async () => toggleTrack()}>
+              {playerModes[isPlaying]}
+            </Pressable>
+          </View>
         </View>
-        <View style={styles.PressableHolder}>
-          <Pressable style={styles.Pressable}>
-            <IonIcon style={styles.icon} name="heart" color="red" size={30} />
-          </Pressable>
-          <Pressable
-            style={styles.Pressable}
-            onPress={async () => toggleTrack()}>
-            {playerModes[isPlaying]}
-          </Pressable>
-        </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   );
 };
 
@@ -90,7 +104,7 @@ const styles = StyleSheet.create({
     height: '7%',
     width: '100%',
     position: 'absolute',
-    bottom: '5%',
+    bottom: '5.03%',
     backgroundColor: COLORS.darkgray,
     borderBottomWidth: 2,
     borderBottomColor: 'black',

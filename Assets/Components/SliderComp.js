@@ -16,8 +16,8 @@ const formatTime=(secs)=>{
 export default SliderComp = () => {
   const {position, duration} = useProgress();
 
-  console.log('duration: ' , duration);
-  console.log('position: ' , position);
+  // console.log('duration: ' , duration);
+  // console.log('position: ' , position);
   const handlechange = (val) => {
     console.log(val);
      TrackPlayer.seekTo(val);

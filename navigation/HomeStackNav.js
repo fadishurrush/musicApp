@@ -3,7 +3,6 @@ import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { ScreenNames } from "../Assets/Data/ScreenNames";
 import { Homescreen } from '../Assets/Screens/HomeScreen';
-import Muiscscreen from '../Assets/Screens/Musicscreen';
 import TrackScreen from '../Assets/Screens/TrackScreen';
 import HistoryScreen from '../Assets/Screens/HistoryScreen';
 import MiniPlayer from '../Assets/Components/MiniPlayerComp';

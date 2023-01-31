@@ -1,20 +1,19 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {COLORS, FONTS} from '../Data/Dimentions';
-import { ScreenNames } from '../Data/ScreenNames';
+import {ScreenNames} from '../Data/ScreenNames';
 
-const  QueryComp = ({item}) => {
+const QueryComp = ({item}) => {
   const navigation = useNavigation();
 
   return (
     <Pressable
       style={styles.container}
-      onPress={() =>{
-        console.log("item = " , item);
-        navigation.navigate(ScreenNames.Track, {item})
-      }
-      }>
+      onPress={() => {
+        console.log('item = ', item);
+        navigation.navigate(ScreenNames.Track, {item});
+      }}>
       <Image style={styles.image} source={item?.artwork} resizeMode="cover" />
       <View>
         <Text style={styles.SongName}>{item?.title}</Text>

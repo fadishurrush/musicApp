@@ -2,7 +2,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {HomeStackNav} from './HomeStackNav';
-import Muiscscreen from '../Assets/Screens/Musicscreen';
+import Muiscscreen from '../Assets/Components/MusicModalComp';
 import {ScreenNames} from '../Assets/Data/ScreenNames';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../Assets/Data/Dimentions';
