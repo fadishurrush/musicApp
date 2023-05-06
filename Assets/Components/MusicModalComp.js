@@ -3,23 +3,22 @@ import {
   Image,
   ImageBackground,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import {COLORS, FONTS} from '../Data/Dimentions';
+import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import SliderComp from './SliderComp';
 import {COntroller} from './Controller';
-import {ScreenNames} from '../Data/ScreenNames';
 import {useContext, useEffect, useState} from 'react';
-import TrackPlayer, {State} from 'react-native-track-player';
+import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
 import MusicContext from '../../store/MusicContext';
 
 const MusicModalComp = () => {
-  const [playname, setplayname] = useState('play');
   const [loading, setLoading] = useState('true');
-  const {isPlaying, setIsPlaying, currentTrack,setCurrentTrack  , modalVisible, setModalVisible} =
+  const {currentTrack, modalVisible, setModalVisible} =
     useContext(MusicContext);
   useEffect(() => {
     console.log('current Track =', currentTrack);
@@ -30,38 +29,42 @@ const MusicModalComp = () => {
     const state = await TrackPlayer.getState();
     if (state == State.Playing) {
       setLoading(false);
-      setplayname('pause');
     } else if (state == State.Paused) {
       setLoading(false);
-      setplayname('play');
     } else {
       setLoading(true);
     }
   };
   return (
     <ImageBackground
-      style={{flex: 1, justifyContent: 'center'}}
+      style={{flex: 1}}
       source={require('../BackGroundImages/Gradient-blue.jpg')}>
-        <Pressable style={styles.back} onPress={() => setModalVisible(!modalVisible)}>
-        <IonIcon name="arrow-down" size={35} color={COLORS.terkwaz} />
-      </Pressable>
-      <Image
-        style={styles.Img}
-        resizeMode="cover"
-        source={currentTrack?.artwork}></Image>
-      <Text style={styles.songname}>{currentTrack?.title}</Text>
-      <Text style={styles.songartist}>
-        {currentTrack?.artist}
-      </Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <Pressable
+            style={styles.back}
+            onPress={() => setModalVisible(!modalVisible)}>
+            <IonIcon
+              style={{alignSelf: 'center'}}
+              name="arrow-down"
+              size={35}
+              color={COLORS.terkwaz}
+            />
+          </Pressable>
+          <Image
+            style={styles.Img}
+            resizeMode="cover"
+            source={currentTrack?.artwork}></Image>
+          <Text style={styles.songname}>{currentTrack?.title}</Text>
+          <Text style={styles.songartist}>{currentTrack?.artist}</Text>
 
-      <SliderComp />
-      {/* controller comp */}
-      {!loading && <COntroller playname={playname} />}
-      {loading && <ActivityIndicator size={65} />}
-      <Pressable
-        onPress={() =>
-          navigation.navigate(ScreenNames.Track, {currentTrack})
-        }></Pressable>
+          <SliderComp />
+          {/* controller comp */}
+          <COntroller />
+        </View>
+        <Text style={styles.lyricTitle}>Lyrics</Text>
+        <View style={styles.lyricsContainer}></View>
+      </ScrollView>
     </ImageBackground>
   );
 };
@@ -92,10 +95,29 @@ const styles = StyleSheet.create({
     ...FONTS.h1,
     textAlign: 'center',
     marginTop: 5,
-  },back: {
+  },
+  back: {
     position: 'absolute',
-    left: 25,
+    left: 20,
     top: 25,
+    width: '10%',
+    height: '5%',
+    // backgroundColor:"red",
+  },
+  container: {
+    width: '100%',
+    height: SIZES.height,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  lyricTitle: {
+    textAlign: 'center',
+    ...FONTS.largeTitle,
+  },
+  lyricsContainer: {
+    width: '90%',
+    height: SIZES.height / 2,
+    alignSelf: 'center',
   },
 });
 

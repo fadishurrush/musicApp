@@ -5,7 +5,7 @@ export const Songs = [
     artist: 'Aaron Smith',
     artwork: require('../SongArtwork/Aaron_Smith_Dancin.jpg'), // Load artwork from the network
     duration: 257, // Duration in seconds
-    Category: [1,3],
+    Category: ["newSong","AllSongs"],
     id:1,
   },
   {
@@ -14,7 +14,7 @@ export const Songs = [
     artist: 'Janji',
     artwork: require('../SongArtwork/Heroes_Tonight.jpg'), // Load artwork from the network
     duration: 209, // Duration in seconds
-    Category: [2,3],
+    Category: ["newSong","AllSongs"],
     id:2,
   },
   {
@@ -23,7 +23,7 @@ export const Songs = [
     artist: 'Dynoro & Gigi D’Agostino',
     artwork: require('../SongArtwork/In_my_mind.jpg'), // Load artwork from the network
     duration: 184, // Duration in seconds
-    Category: [2,3],
+    Category: ["newSong","AllSongs"],
     id:3,
   },
   {
@@ -32,7 +32,7 @@ export const Songs = [
     artist: 'Xcho',
     artwork: require('../SongArtwork/Xcho_R.jpg'), // Load artwork from the network
     duration: 148, // Duration in seconds
-    Category: [1,3],
+    Category: ["fav","AllSongs"],
     id:4,
   },
   {
@@ -41,7 +41,7 @@ export const Songs = [
     artist: 'Xcho',
     artwork: require('../SongArtwork/Xcho_B.jpg'), // Load artwork from the network
     duration: 171, // Duration in seconds
-    Category: [2,3],
+    Category: ["fav","AllSongs"],
     id:5,
   },
 ];

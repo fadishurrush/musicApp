@@ -11,7 +11,7 @@ import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MusicContext from '../../store/MusicContext';
 import {FONTS, COLORS} from '../Data/Dimentions';
-import {History} from '../Data/History';
+import {Songs as songsArray} from '../Data/Songs';
 
 const TrackComp = props => {
   const [heartname, setheartname] = useState('heart-outline');
@@ -23,18 +23,25 @@ const TrackComp = props => {
     setIsPlaying,
     currentTrack,
     setCurrentTrack,
-    trackArr,
-    date,
+    History,
+    today,
   } = useContext(MusicContext);
 
-  // useEffect(() => {
-  //   console.log('playbackstate = ', playbackState);
-  //   setIsPlaying(playbackState)
-  // }, [playbackState]);
-
-  const addSong = async () => {
-    await TrackPlayer.add(props.item);
+  const SameCategory = category => {
+    //filter songs
+    let songsList = songsArray.filter(
+      a => a.Category.includes(category) && a.title !== props?.item.title,
+    );
+    console.log("songs array ", songsList);
+    TrackPlayer.add(songsList);
+    playBack();
   };
+
+  useEffect(() => {
+    if (isPlaying === 'stopped') {
+      SameCategory(props?.item.Category[1]);
+    }
+  }, [isPlaying]);
 
   const playerModes = {
     loading: <ActivityIndicator size={30} />,
@@ -42,6 +49,12 @@ const TrackComp = props => {
       <IonIcon style={styles.icon} name={'pause'} color={'black'} size={30} />
     ),
     paused: (
+      <IonIcon style={styles.icon} name={'play'} color={'black'} size={30} />
+    ),
+    ready: (
+      <IonIcon style={styles.icon} name={'play'} color={'black'} size={30} />
+    ),
+    stopped: (
       <IonIcon style={styles.icon} name={'play'} color={'black'} size={30} />
     ),
   };
@@ -59,42 +72,51 @@ const TrackComp = props => {
     }
   };
 
-  const validDate = () => {
-    var day = new Date();
+  const historyValid = () => {
+    if (History) {
+      return true;
+    }
+    const {day} = History[0];
 
     let UTC = day.getUTCDate();
-    let dateUTC = date.getUTCDate();
+    let TodayUTC = today.getUTCDate();
     let month = day.getMonth();
-    let datemonth = date.getMonth();
+    let Todaymonth = today.getMonth();
     let year = day.getFullYear();
-    let dateyear = date.getFullYear();
-
-    console.log('current date ', month, UTC, year);
-    console.log('opened app in ', datemonth, dateUTC, dateyear);
-    console.log('track arr', trackArr);
-
-    if (
-      date.getUTCDate() != day.getUTCDate() ||
-      date.getMonth() != day.getMonth() ||
-      date.getFullYear() != day.getFullYear()
-    ) {
-      trackArr = [];
-      console.log('new TrackArr new day ', trackArr);
-      trackArr.push(props?.item);
-      History.push({time: day, trackArr: trackArr});
-    } else if (History.length < 1) {
-      trackArr.push(props?.item);
-      History.push({time: day, trackArr: trackArr});
-      console.log('new TrackArr ', trackArr);
-    }else{
-
+    let Todayyear = today.getFullYear();
+    var tod = new Date(Todayyear, Todaymonth, TodayUTC);
+    var d = new Date(year, month, UTC);
+    if (tod === d) {
+      return false;
+    }
+    return true;
+  };
+  const historyCheck = () => {
+    if (!historyValid) {
+      let {item} = props;
+      var newDay = {day: today, song: [item]};
+      fetch('https://mozikapp.onrender.com/addHistory', {
+        method: 'POST',
+        body: JSON.stringify(newDay),
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch(e => {
+          console.log('error ', e);
+        });
+    } else {
+      var {song} = History;
+      song?.includes(props?.item)
+        ? console.log('song exists in array')
+        : song?.add(props?.item);
     }
   };
-
   const addNewItemToTrack = async () => {
     console.log('no songs!');
     await TrackPlayer.add(props.item);
-    // validDate();
+    // historyCheck();
     setCurrentTrack(props?.item);
     await TrackPlayer.play();
     setIsPlaying('playing');
@@ -104,7 +126,7 @@ const TrackComp = props => {
   const setNewSongToTrack = async () => {
     await TrackPlayer.reset();
     await TrackPlayer.add(props.item);
-    // validDate();
+    // historyCheck();
     setCurrentTrack(props?.item);
     await TrackPlayer.play();
     setIsPlaying('playing');
@@ -137,7 +159,8 @@ const TrackComp = props => {
   };
 
   const playBack = async () => {
-    const track = await TrackPlayer.getTrack(0);
+    const current = await TrackPlayer.getCurrentTrack()
+    const track = await TrackPlayer.getTrack(current);
     const state = await TrackPlayer.getState();
     console.log('TrackPlayer State :', `${state}`);
 
@@ -172,7 +195,9 @@ const TrackComp = props => {
             size={30}
           />
         </Pressable>
-        <Pressable style={styles.Pressable} onPress={async () => playBack()}>
+        <Pressable
+          style={styles.Pressable}
+          onPress={async () => await playBack()}>
           {renderPlayButton()}
         </Pressable>
       </View>

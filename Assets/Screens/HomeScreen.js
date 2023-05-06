@@ -80,6 +80,7 @@ export const Homescreen = ({navigation}) => {
   };
 
   useEffect(() => {
+    
     // player set up
     TrackPlayerRestarter();
     // Time related text
@@ -161,7 +162,7 @@ export const Homescreen = ({navigation}) => {
       data: catagories,
       renderItem: renderItem,
       showsHorizontalScrollIndicator: false,
-      keyExtractor: item => `${item.id}`,
+      keyExtractor: item => `${item?.id}`,
       contentContainerStyle: {paddingVertical: SIZES.padding * 2},
       style: {...styles.CateFlatList},
     },
@@ -169,7 +170,7 @@ export const Homescreen = ({navigation}) => {
       data: songs,
       renderItem: renderItem2,
       showsVerticalsScrollIndicator: false,
-      keyExtractor: item => `${item.id}`,
+      keyExtractor: item => `${item?.id}`,
       contentContainerStyle: {
         paddingHorizontal: SIZES.padding * 2,
         paddingBottom: 30,

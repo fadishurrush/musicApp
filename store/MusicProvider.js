@@ -4,10 +4,12 @@ import MusicContext from './MusicContext';
 import {Songs} from '../Assets/Data/Songs';
 
 const MusicProvider = props => {
+  
   const [isPlaying, setIsPlaying] = useState('loading');
   const [currentTrack, setCurrentTrack] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const today = new Date();
+  const History = fetch('https://mozikapp.onrender.com/getHistory');
   return (
     <MusicContext.Provider
       value={{
@@ -17,6 +19,8 @@ const MusicProvider = props => {
         setCurrentTrack,
         modalVisible,
         setModalVisible,
+        today,
+        History,
       }}>
       {props.children}
     </MusicContext.Provider>

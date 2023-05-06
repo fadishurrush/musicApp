@@ -1,25 +1,29 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
+import MusicContext from '../../store/MusicContext';
 import HistoryComp from '../Components/HistoryComp';
 import {FONTS} from '../Data/Dimentions';
-import {History} from '../Data/History';
 
 const HistoryScreen = () => {
-    
-  const renderComp = trackArr => {
-    console.log(trackArr);
-    for (let index = 0; index < trackArr.length; index++) {
-        const element = trackArr[index];
-        return <HistoryComp track={element} />
+  const {History} = useContext(MusicContext);
+  const renderComp = songArr => {
+    console.log(songArr);
+    for (let index = 0; index < songArr.length; index++) {
+      const song = songArr[index];
+      return <HistoryComp track={song} />;
     }
   };
   const renderItem = ({item}) => {
-    const {time, trackArr} = item;
-    console.log("track arr ", trackArr);
+    const {day, songArr} = item;
+    console.log('track arr ', songArr);
+    console.log('day: ', day);
     return (
       <View>
-        <Text style={styles.TextDate}>{extractDate(time)}</Text>
-        {renderComp(trackArr)}
+        <Text style={styles.TextDate}>
+          {/* {extractDate(time)} */}
+          {day}
+        </Text>
+        {renderComp(songArr)}
       </View>
     );
   };
@@ -27,7 +31,6 @@ const HistoryScreen = () => {
     FlatList: {
       data: History,
       renderItem: renderItem,
-      extraData: History.trackArr
     },
   };
 
@@ -55,21 +58,18 @@ const HistoryScreen = () => {
 
     return day[d] + ',' + month[m] + UTC + ',' + y;
   };
-  useEffect(() => {
-    // console.log("History Track arr -> ",History[0].trackArr)
-  }, []);
-  const WatchedHistory = () => {
-    if (History.length < 1) {
-      return (
+  return( <View>
+      {
+      History ? (
         <Text style={{textAlign: 'center', color: 'black'}}>
           No music recently played
         </Text>
-      );
-    } else {
-      return <FlatList {...params.FlatList} />;
+      ) : (
+        <FlatList {...params.FlatList} />
+      )
     }
-  };
-  return <View>{WatchedHistory()}</View>;
+  </View>
+  )
 };
 
 const styles = StyleSheet.create({

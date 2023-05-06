@@ -18,7 +18,7 @@ import {iconName} from '../../App';
 
 const TrackScreen = ({route, navigation}) => {
   const [songs, setSongs] = useState(songsArray);
-  const {item, isTrackerReady} = route?.params || {};
+  const {item} = route?.params || {};
 
   // const [sameTrack, setSameTrack] = useState(false);
 
@@ -27,17 +27,16 @@ const TrackScreen = ({route, navigation}) => {
   }, []);
   const SameCategory = category => {
     //filter songs
-    let songsList = songsArray.filter(a => a.Category.includes(category));
-
-    setSongs(songsList);
+    let songs = songsArray.filter(
+      a => a.Category.includes(category) && a.title != item.title,
+    );
+    songs.unshift(item)
+    
+    setSongs(songs);
   };
 
   const renderItem = ({item}) => {
-    return (
-      <TrackComp
-        item={item}
-      />
-    );
+    return <TrackComp item={item} />;
   };
   const params = {
     FlatList: {

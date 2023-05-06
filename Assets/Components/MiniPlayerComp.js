@@ -44,10 +44,16 @@ const MiniPlayer = () => {
   const playerModes = {
     loading: <ActivityIndicator size={30} />,
     playing: (
-      <IonIcon style={styles.icon} name={'pause'} color={'red'} size={30} />
+      <IonIcon style={styles.icon} name={'pause'} color={COLORS.greenesh} size={30} />
     ),
     paused: (
-      <IonIcon style={styles.icon} name={'play'} color={'red'} size={30} />
+      <IonIcon style={styles.icon} name={'play'} color={COLORS.greenesh} size={30} />
+    ),
+    stopped :(
+      <IonIcon style={styles.icon} name={'play'} color={COLORS.greenesh} size={30} />
+    ),
+    ready :(
+      <IonIcon style={styles.icon} name={'play'} color={COLORS.greenesh} size={30} />
     ),
   };
 
@@ -65,7 +71,45 @@ const MiniPlayer = () => {
   const getProgress = () => {
     return (position / duration) * 100;
   };
+  const SameCategory = async category => {
+    //filter songs
+
+    let songsList = songsArray.filter(
+      a => a.Category.includes(category) && a.title !== currentTrack.title,
+    );
+    console.log('songs array ', songsList);
+    TrackPlayer.add(songsList);
+  };
+  const playNext = async () => {
+    const current = await TrackPlayer.getCurrentTrack();
+    const queue = await TrackPlayer.getQueue();
+    // console.log('queue length and current ', queue.length, current);
+    if (queue.length == current + 1) {
+      SameCategory(currentTrack.Category[1]);
+    }
+    await TrackPlayer.skipToNext();
+    const newcurrent = await TrackPlayer.getCurrentTrack();
+     const  track = await TrackPlayer.getTrack(newcurrent);
+    console.log('track', track);
+    setCurrentTrack(track);
+    await TrackPlayer.play();
+  };
+  const playPrevious = async () => {
+    const current = await TrackPlayer.getCurrentTrack();
+    const queue = await TrackPlayer.getQueue();
+    var track = await TrackPlayer.getTrack(current);
+
+    if (queue.length - 1 == current) {
+      SameCategory(track.Category[1]);
+    }
+    await TrackPlayer.skipToPrevious();
+    current = await TrackPlayer.getCurrentTrack();
+    track = await TrackPlayer.getTrack(current);
+    setCurrentTrack(track);
+    await TrackPlayer.play()
+  };
   return (
+    
     <View style={styles.container}>
       <Modal
         animationType="slide"
@@ -89,7 +133,7 @@ const MiniPlayer = () => {
           </View>
           <View style={styles.PressableHolder}>
             <Pressable style={styles.Pressable}>
-              <IonIcon style={styles.icon} name="heart" color="red" size={30} />
+              <IonIcon style={styles.icon} name="heart" color={COLORS.greenesh} size={30} />
             </Pressable>
             <Pressable
               style={styles.Pressable}
