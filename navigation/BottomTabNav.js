@@ -7,6 +7,7 @@ import {ScreenNames} from '../Assets/Data/ScreenNames';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../Assets/Data/Dimentions';
 import SearchScreen from '../Assets/Screens/SearchScreen';
+import LibraryScreen from '../Assets/Screens/LibraryScreen';
 
 const tab = createBottomTabNavigator();
 
@@ -30,6 +31,11 @@ const BottomTabNav = () => {
                 ? 'search'
                 : 'search-outline';
             }
+            else if(route.name === ScreenNames.Library) {
+              iconName = focused
+                ? 'library'
+                : 'library-outline';
+            }
 
             return <IonIcon name={iconName} size={size} color={color} />;
           },
@@ -40,7 +46,7 @@ const BottomTabNav = () => {
         >
         <tab.Screen name={ScreenNames.HomeStackNav} component={HomeStackNav} options={{headerShown:false}} />
         <tab.Screen name={ScreenNames.Search} component={SearchScreen} options={{headerShown:false}}/>
-        {/* <tab.Screen name={Profile} component={StackNav} /> */}
+        <tab.Screen name={ScreenNames.Library} component={LibraryScreen} options={{headerShown:false}}/>
         {/* <tab.Screen name={Settings} component={StackNav} /> */}
       </tab.Navigator>
   );

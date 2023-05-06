@@ -7,4 +7,5 @@ export const ScreenNames = {
   History: 'history',
   AfterSplashScreen: 'AfterSplashScreen',
   Splash: 'SplashScreen',
+  Library:'Library'
 };
