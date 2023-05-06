@@ -12,6 +12,7 @@ const LibraryScreen = ({navigation}) =>{
         <Text style={styles.Header}>
             Your Library
         </Text>
+        
         </ImageBackground>
     )
 }

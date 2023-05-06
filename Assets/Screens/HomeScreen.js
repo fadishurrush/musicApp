@@ -19,6 +19,7 @@ import TrackPlayer, {
 import ImageCard from '../Components/ImageCard';
 import {Songs as SongsArray} from '../Data/Songs';
 import {ScreenNames} from '../Data/ScreenNames';
+import { useBluetoothHeadsetDetection } from 'react-native-bluetooth-headset-detect';
 
 export const Homescreen = ({navigation}) => {
   const [catagories, setCategories] = useState(Catagories);
@@ -26,7 +27,7 @@ export const Homescreen = ({navigation}) => {
   const [songs, setSongs] = useState(SongsArray);
   const [isTrackerReady, setIsTrackerReady] = useState(false);
   const [text, setText] = useState('');
-
+  
   const MainIcons = () => {
     return (
       <View style={styles.Container}>
@@ -80,6 +81,7 @@ export const Homescreen = ({navigation}) => {
   };
 
   useEffect(() => {
+    
     
     // player set up
     TrackPlayerRestarter();
