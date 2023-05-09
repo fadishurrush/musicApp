@@ -24,8 +24,6 @@ const MiniPlayer = () => {
     useContext(MusicContext);
   const playbackState = usePlaybackState();
   const {position, duration} = useProgress();
-  var device = useBluetoothHeadsetDetection();
-  console.log("device ," , device);
   const toggleTrack = async () => {
     console.log('playbackState = ', playbackState);
     if (playbackState === 'playing' || playbackState === 3) {
