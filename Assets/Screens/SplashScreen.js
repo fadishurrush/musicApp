@@ -48,9 +48,9 @@ const SplashScreen = ({navigation}) => {
     
   },[])
   
-  // setTimeout(() => {
-  //           navigation.replace(ScreenNames.AfterSplashScreen);
-  //         }, 1500);
+  setTimeout(() => {
+            navigation.replace(ScreenNames.Login);
+          }, 3000);
   return (
     <View style={{flex:1}}>
   <Text style={{color:'black'}}>this is splash Screen</Text>

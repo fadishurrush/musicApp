@@ -13,7 +13,7 @@ export const SplashStackNav=()=>{
             <Stack.Navigator>
                 <Stack.Screen name={ScreenNames.Splash} component={SplashScreen} />
                 <Stack.Screen name={ScreenNames.AfterSplashScreen} component={AfterSplashScreen} options={{headerShown: false}} />
-                <Stack.Screen name={ScreenNames.Login} component={LoginScreen} />
+                <Stack.Screen name={ScreenNames.Login} component={LoginScreen} options={{headerShown: false}} />
             </Stack.Navigator>
             </NavigationContainer>
     )
