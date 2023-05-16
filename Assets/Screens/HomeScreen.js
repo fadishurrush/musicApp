@@ -82,7 +82,6 @@ export const Homescreen = ({navigation}) => {
 
   useEffect(() => {
     
-    
     // player set up
     TrackPlayerRestarter();
     // Time related text

@@ -18,18 +18,19 @@ const SplashScreen = ({navigation}) => {
           })
     console.log('songs array after -> ', SongsArray);
     setTimeout(() => {
-      navigation.replace(ScreenNames.AfterSplashScreen);
+      navigation.replace(ScreenNames.Login);
     }, 1500);
     
         }else{console.log('response was null');
         setTimeout(() => {
-          navigation.replace(ScreenNames.AfterSplashScreen);
+          navigation.replace(ScreenNames.Login);
         }, 1500);
       }
       })
       .catch(e => {
         console.log('fetch error , ', e);
       });
+
 //   var songurl =
 //   'https://mozikapp.onrender.com/getSong?title=Clouds';
 // fetch(songurl)
