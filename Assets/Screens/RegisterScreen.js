@@ -1,48 +1,48 @@
-import React, {useEffect, useState} from 'react';
 import {
-  ActivityIndicator,
-  Alert,
   ImageBackground,
-  Modal,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
-import {ScreenNames} from '../Data/ScreenNames';
-import {urls} from '../../api/urls';
-import {useNavigation} from '@react-navigation/native';
+import {TextInput} from 'react-native-gesture-handler';
+import React, {useState} from 'react';
+import { urls } from '../../api/urls';
+import { ScreenNames } from '../Data/ScreenNames';
 
-const LoginScreen = () => {
+const RegisterScreen = navigation => {
   const [email, setEmail] = useState('');
   const [password, setpassword] = useState('');
   const [isSecured, setIsSecured] = useState(true);
-  const [indicatorOn, setindicatorOn] = useState(false);
+  const [indicatorOn,setindicatorOn] = useState(false)
 
-  const navigation = useNavigation();
-  const recover = () => {};
-  const register = () => {
-    navigation.navigate(ScreenNames.Register);
-  };
-  const Login = async () => {
+  const Register = async () => {
     let emailreg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-    console.log('login pressed');
+    console.log('Register pressed');
     if (email.trim().length == 0 || password.trim().length == 0) {
       Alert.alert('some fields are empty');
       return;
-    } else if (emailreg.test(email) === false) {
-      Alert.alert('enter a proper email');
+    }else if(emailreg.test(email) === false){
+      Alert.alert("enter a proper email")
     }
-    setindicatorOn(true);
-    await fetch(
-      `${urls.Login}?email=${email.toLowerCase()}&password=${password}`,
-    )
+    setindicatorOn(true)
+    
+    await fetch(urls.Register,{
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email.toLowerCase(),
+            password: password,
+          }),
+    })
       .then(res => res.json())
       .then(resJson => {
-        setindicatorOn(false);
-        console.log('resjson ->', resJson);
+        setindicatorOn(false)
         if (!resJson.user) {
           Alert.alert(resJson?.message);
         } else {
@@ -56,10 +56,10 @@ const LoginScreen = () => {
 
   return (
     <ImageBackground
-      source={require('../BackGroundImages/loginbackground.jpg')}
+      resizeMode="cover"
       style={styles.background}
-      resizeMode="stretch">
-      <Modal animationType="fade" transparent={true} visible={indicatorOn}>
+      source={require('../BackGroundImages/RegisterBG.jpg')}>
+        <Modal animationType="fade" transparent={true} visible={indicatorOn}>
         <View style={styles.loadingContainer}>
           <View style={styles.Dialog}>
             <Text style={styles.loading}>Logging in...</Text>
@@ -67,7 +67,7 @@ const LoginScreen = () => {
           </View>
         </View>
       </Modal>
-      <Text style={styles.welcome}>Welcome</Text>
+      <Text style={styles.welcome}>Welcome to Mozik</Text>
       <View style={styles.outerContainer}>
         <View style={styles.container}>
           <View style={styles.searchBarClicked}>
@@ -83,7 +83,6 @@ const LoginScreen = () => {
         <View style={styles.container}>
           <View style={styles.searchBarClicked}>
             <TextInput
-              // value={passwordhidden}
               secureTextEntry={isSecured}
               onChangeText={setpassword}
               value={password}
@@ -101,25 +100,11 @@ const LoginScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-
-        <View style={styles.forgotPassContainer}>
-          <Text style={styles.forgotPass}>Forgot Password?</Text>
-          <TouchableOpacity onPress={() => recover()}>
-            <Text style={styles.forgotPassLink}>Recover here</Text>
-          </TouchableOpacity>
-        </View>
-
+        {indicatorOn && Alert.alert("Logging in",<ActivityIndicator></ActivityIndicator>)}
         <TouchableOpacity
           style={styles.LoginButton}
-          onPress={async () => await Login()}>
-          <Text style={styles.LoginText}>Login</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.registerContainer}>
-        <Text style={styles.register}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => register()}>
-          <Text style={styles.registerLink}>Register now!</Text>
+          onPress={async () => await Register()}>
+          <Text style={styles.LoginText}>Register</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -226,5 +211,4 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(48,170,200,0.1)',
   },
 });
-
-export default LoginScreen;
+export default RegisterScreen;

@@ -9,4 +9,5 @@ export const ScreenNames = {
   Splash: 'SplashScreen',
   Library:'Library',
   Login:'Login',
+  Register:'Register',
 };

@@ -4,19 +4,16 @@ import { useEffect } from 'react';
 import { Songs as SongsArray } from '../Data/Songs';
 const SplashScreen = ({navigation}) => {
   useEffect(()=>{
-    console.log('songs array -> ', SongsArray);
     var songurl = 'https://mozikapp.onrender.com/getAllSongs';
     fetch(songurl)
       .then(res => res.json())
       .then(resJson => {
         if(resJson){
-          console.log("resJosn " , resJson);
           resJson?.all.forEach(element => {
             element.artwork = {uri : element.artwork}
             
             SongsArray.push(element)
           })
-    console.log('songs array after -> ', SongsArray);
     setTimeout(() => {
       navigation.replace(ScreenNames.Login);
     }, 1500);
