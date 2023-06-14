@@ -6,18 +6,21 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import {TextInput} from 'react-native-gesture-handler';
 import React, {useState} from 'react';
 import { urls } from '../../api/urls';
 import { ScreenNames } from '../Data/ScreenNames';
+import { useNavigation } from '@react-navigation/native';
 
-const RegisterScreen = navigation => {
+const RegisterScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setpassword] = useState('');
   const [isSecured, setIsSecured] = useState(true);
   const [indicatorOn,setindicatorOn] = useState(false)
+  const navigation = useNavigation();
 
   const Register = async () => {
     let emailreg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
@@ -25,11 +28,11 @@ const RegisterScreen = navigation => {
     if (email.trim().length == 0 || password.trim().length == 0) {
       Alert.alert('some fields are empty');
       return;
-    }else if(emailreg.test(email) === false){
+    }else if(emailreg.test(email.trim()) === false){
       Alert.alert("enter a proper email")
+      return;
     }
     setindicatorOn(true)
-    
     await fetch(urls.Register,{
         method: "POST",
         headers: {
@@ -50,7 +53,7 @@ const RegisterScreen = navigation => {
         }
       })
       .catch(e => {
-        console.log('login error', e);
+        console.log('register error', e);
       });
   };
 
@@ -100,7 +103,6 @@ const RegisterScreen = navigation => {
             </TouchableOpacity>
           </View>
         </View>
-        {indicatorOn && Alert.alert("Logging in",<ActivityIndicator></ActivityIndicator>)}
         <TouchableOpacity
           style={styles.LoginButton}
           onPress={async () => await Register()}>

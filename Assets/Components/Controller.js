@@ -11,7 +11,6 @@ export const COntroller = () => {
   const playbackState = usePlaybackState();
 
   const toggleTrack = async () => {
-    console.log('playbackState = ', playbackState);
     if (playbackState === 'playing' || playbackState === 3) {
       await pasueTrack();
     } else if (
@@ -38,13 +37,11 @@ export const COntroller = () => {
   const pasueTrack = async () => {
     await TrackPlayer.pause();
     setIsPlaying('paused');
-    console.log('pasued');
   };
 
   const playTrack = async () => {
     await TrackPlayer.play();
     setIsPlaying('playing');
-    console.log('playing');
   };
   const SameCategory = async category => {
     //filter songs
@@ -52,20 +49,17 @@ export const COntroller = () => {
     let songsList = songsArray.filter(
       a => a.Category.includes(category) && a.title !== currentTrack.title,
     );
-    console.log('songs array ', songsList);
     TrackPlayer.add(songsList);
   };
   const playNext = async () => {
     const current = await TrackPlayer.getCurrentTrack();
     const queue = await TrackPlayer.getQueue();
-    // console.log('queue length and current ', queue.length, current);
     if (queue.length == current + 1) {
       SameCategory(currentTrack.Category[1]);
     }
     await TrackPlayer.skipToNext();
     const newcurrent = await TrackPlayer.getCurrentTrack();
      const  track = await TrackPlayer.getTrack(newcurrent);
-    console.log('track', track);
     setCurrentTrack(track);
     await TrackPlayer.play();
   };

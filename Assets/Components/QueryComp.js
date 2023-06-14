@@ -11,7 +11,6 @@ const QueryComp = ({item}) => {
     <Pressable
       style={styles.container}
       onPress={() => {
-        console.log('item = ', item);
         navigation.navigate(ScreenNames.Track, {item});
       }}>
       <Image style={styles.image} source={item?.artwork} resizeMode="cover" />

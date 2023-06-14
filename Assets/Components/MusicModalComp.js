@@ -21,7 +21,6 @@ const MusicModalComp = () => {
   const {currentTrack, modalVisible, setModalVisible} =
     useContext(MusicContext);
   useEffect(() => {
-    console.log('current Track =', currentTrack);
     togglePlayname();
   }, []);
 

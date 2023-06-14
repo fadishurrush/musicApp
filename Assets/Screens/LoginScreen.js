@@ -42,7 +42,6 @@ const LoginScreen = () => {
       .then(res => res.json())
       .then(resJson => {
         setindicatorOn(false);
-        console.log('resjson ->', resJson);
         if (!resJson.user) {
           Alert.alert(resJson?.message);
         } else {

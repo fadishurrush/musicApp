@@ -32,7 +32,6 @@ const TrackComp = props => {
     let songsList = songsArray.filter(
       a => a.Category.includes(category) && a.title !== props?.item.title,
     );
-    console.log("songs array ", songsList);
     TrackPlayer.add(songsList);
     playBack();
   };
@@ -60,9 +59,6 @@ const TrackComp = props => {
   };
 
   const renderPlayButton = () => {
-    console.log('item title is ', props.item.title);
-    console.log('currentTrack is ', currentTrack);
-    console.log('is playing is ', isPlaying);
     if (currentTrack?.title == props?.item.title) {
       return playerModes[isPlaying];
     } else {
@@ -101,7 +97,6 @@ const TrackComp = props => {
       })
         .then(res => res.json())
         .then(data => {
-          console.log('Success:', data);
         })
         .catch(e => {
           console.log('error ', e);
@@ -109,18 +104,16 @@ const TrackComp = props => {
     } else {
       var {song} = History;
       song?.includes(props?.item)
-        ? console.log('song exists in array')
+        ? null
         : song?.add(props?.item);
     }
   };
   const addNewItemToTrack = async () => {
-    console.log('no songs!');
     await TrackPlayer.add(props.item);
     // historyCheck();
     setCurrentTrack(props?.item);
     await TrackPlayer.play();
     setIsPlaying('playing');
-    console.log('song added!');
   };
 
   const setNewSongToTrack = async () => {
@@ -135,17 +128,14 @@ const TrackComp = props => {
   const pasueTrack = async () => {
     await TrackPlayer.pause();
     setIsPlaying('paused');
-    console.log('pasued');
   };
 
   const playTrack = async () => {
     await TrackPlayer.play();
     setIsPlaying('playing');
-    console.log('playing');
   };
 
   const toggleTrack = async () => {
-    console.log('playbackState = ', playbackState);
     if (playbackState === 'playing' || playbackState === 3) {
       await pasueTrack();
     } else if (
@@ -162,16 +152,12 @@ const TrackComp = props => {
     const current = await TrackPlayer.getCurrentTrack()
     const track = await TrackPlayer.getTrack(current);
     const state = await TrackPlayer.getState();
-    console.log('TrackPlayer State :', `${state}`);
 
     if (track) {
-      console.log('track : ', track);
       if (track.title != props?.item.title) {
-        console.log('setting new song');
         await setNewSongToTrack();
       } else {
         await toggleTrack();
-        console.log('toggling track');
       }
     } else {
       await addNewItemToTrack();

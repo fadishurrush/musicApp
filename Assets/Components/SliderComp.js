@@ -3,24 +3,18 @@ import {StyleSheet, Text, View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import TrackPlayer, {useProgress} from 'react-native-track-player';
 
-const formatTime=(secs)=>{
-  let minutes=Math.floor(secs /60);
-  let seconds= Math.ceil(secs - minutes * 60);
-  if (seconds < 10){
-    seconds = `0${seconds}`
+const formatTime = secs => {
+  let minutes = Math.floor(secs / 60);
+  let seconds = Math.ceil(secs - minutes * 60);
+  if (seconds < 10) {
+    seconds = `0${seconds}`;
   }
-  return(
-    `${minutes}:${seconds}`
-  )
+  return `${minutes}:${seconds}`;
 };
 export default SliderComp = () => {
   const {position, duration} = useProgress();
-
-  // console.log('duration: ' , duration);
-  // console.log('position: ' , position);
-  const handlechange = (val) => {
-    console.log(val);
-     TrackPlayer.seekTo(val);
+  const handlechange = val => {
+    TrackPlayer.seekTo(val);
   };
 
   return (
@@ -35,12 +29,11 @@ export default SliderComp = () => {
         onSlidingComplete={handlechange}
       />
       <View style={styles.timecontainer}>
-      <Text>{formatTime(position)}</Text>
-      <Text>{formatTime(duration)}</Text>
+        <Text>{formatTime(position)}</Text>
+        <Text>{formatTime(duration)}</Text>
       </View>
-
     </View>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
@@ -54,10 +47,10 @@ const styles = StyleSheet.create({
     height: 60,
     alignSelf: 'center',
   },
-  timecontainer:{
-    maxWidth:'80%',
-    flexDirection:'row',
-    justifyContent:'space-between',
-    marginLeft:'10%',
-  }
+  timecontainer: {
+    maxWidth: '80%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginLeft: '10%',
+  },
 });

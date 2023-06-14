@@ -75,7 +75,6 @@ export const Homescreen = ({navigation}) => {
       });
       setIsTrackerReady(true);
     } else {
-      console.log('is running');
       setIsTrackerReady(true);
     }
   };
@@ -89,7 +88,6 @@ export const Homescreen = ({navigation}) => {
     let today = new Date();
 
     let hours = today.getHours();
-    console.log('hours =' + hours);
     if (hours <= 12 && hours >= 6) {
       setText('Good morning');
     } else if (hours <= 17 && hours > 12) {

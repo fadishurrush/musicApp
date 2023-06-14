@@ -2,10 +2,10 @@ import {Text, View} from 'react-native';
 import {ScreenNames} from '../Data/ScreenNames';
 import { useEffect } from 'react';
 import { Songs as SongsArray } from '../Data/Songs';
+import {urls} from '../../api/urls'
 const SplashScreen = ({navigation}) => {
   useEffect(()=>{
-    var songurl = 'https://mozikapp.onrender.com/getAllSongs';
-    fetch(songurl)
+    fetch(urls.getAllSongs)
       .then(res => res.json())
       .then(resJson => {
         if(resJson){

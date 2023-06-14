@@ -7,7 +7,6 @@ import {FONTS} from '../Data/Dimentions';
 const HistoryScreen = () => {
   const {History} = useContext(MusicContext);
   const renderComp = songArr => {
-    console.log(songArr);
     for (let index = 0; index < songArr.length; index++) {
       const song = songArr[index];
       return <HistoryComp track={song} />;
@@ -15,8 +14,7 @@ const HistoryScreen = () => {
   };
   const renderItem = ({item}) => {
     const {day, songArr} = item;
-    console.log('track arr ', songArr);
-    console.log('day: ', day);
+
     return (
       <View>
         <Text style={styles.TextDate}>
@@ -58,18 +56,17 @@ const HistoryScreen = () => {
 
     return day[d] + ',' + month[m] + UTC + ',' + y;
   };
-  return( <View>
-      {
-      History ? (
+  return (
+    <View>
+      {History ? (
         <Text style={{textAlign: 'center', color: 'black'}}>
           No music recently played
         </Text>
       ) : (
         <FlatList {...params.FlatList} />
-      )
-    }
-  </View>
-  )
+      )}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

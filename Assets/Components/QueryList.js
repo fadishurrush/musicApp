@@ -53,7 +53,6 @@ const QueryList = ({searchPhrase, setClicked, data}) => {
           .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
       );
     });
-    console.log('title list ', titleList);
     setList(titleList);
   };
 
