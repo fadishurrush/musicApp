@@ -1,5 +1,4 @@
 import {
-  ActivityIndicator,
   Image,
   ImageBackground,
   Pressable,
@@ -12,28 +11,14 @@ import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import SliderComp from './SliderComp';
 import {COntroller} from './Controller';
-import {useContext, useEffect, useState} from 'react';
+import {useContext} from 'react';
 import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
 import MusicContext from '../../store/MusicContext';
 
 const MusicModalComp = () => {
-  const [loading, setLoading] = useState('true');
   const {currentTrack, modalVisible, setModalVisible} =
     useContext(MusicContext);
-  useEffect(() => {
-    togglePlayname();
-  }, []);
 
-  const togglePlayname = async () => {
-    const state = await TrackPlayer.getState();
-    if (state == State.Playing) {
-      setLoading(false);
-    } else if (state == State.Paused) {
-      setLoading(false);
-    } else {
-      setLoading(true);
-    }
-  };
   return (
     <ImageBackground
       style={{flex: 1}}

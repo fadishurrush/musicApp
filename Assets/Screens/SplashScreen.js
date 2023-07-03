@@ -11,10 +11,11 @@ const SplashScreen = ({navigation}) => {
         if(resJson){
           resJson?.all.forEach(element => {
             element.artwork = {uri : element.artwork}
-            
+            delete element['__v'];
             SongsArray.push(element)
           })
     setTimeout(() => {
+      console.log("Array ->",SongsArray);
       navigation.replace(ScreenNames.Login);
     }, 1500);
     

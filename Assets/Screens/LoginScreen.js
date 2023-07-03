@@ -22,7 +22,8 @@ const LoginScreen = () => {
   const [indicatorOn, setindicatorOn] = useState(false);
 
   const navigation = useNavigation();
-  const recover = () => {};
+  const recover = () => {    navigation.navigate(ScreenNames.Recover);
+  };
   const register = () => {
     navigation.navigate(ScreenNames.Register);
   };

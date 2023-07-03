@@ -10,4 +10,5 @@ export const ScreenNames = {
   Library:'Library',
   Login:'Login',
   Register:'Register',
+  Recover:'Recover',
 };

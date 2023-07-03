@@ -13,12 +13,7 @@ export const COntroller = () => {
   const toggleTrack = async () => {
     if (playbackState === 'playing' || playbackState === 3) {
       await pasueTrack();
-    } else if (
-      playbackState === 'paused' ||
-      playbackState === 2 ||
-      playbackState === 'ready' ||
-      playbackState === 'stopped'
-    ) {
+    } else {
       await playTrack();
     }
   };
@@ -28,6 +23,8 @@ export const COntroller = () => {
 
   const playerModes = {
     loading: <ActivityIndicator size={50} />,
+    idle: <ActivityIndicator size={50} />,
+    connecting: <ActivityIndicator size={50} />,
     playing: <IonIcon style={styles.icon} name={'pause'} size={65} />,
     paused: <IonIcon style={styles.icon} name={'play'} size={65} />,
     stopped: <IonIcon style={styles.icon} name={'play'} size={65} />,

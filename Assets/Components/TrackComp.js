@@ -44,6 +44,8 @@ const TrackComp = props => {
 
   const playerModes = {
     loading: <ActivityIndicator size={30} />,
+    idle: <ActivityIndicator size={30} />,
+    connecting: <ActivityIndicator size={30} />,
     playing: (
       <IonIcon style={styles.icon} name={'pause'} color={'black'} size={30} />
     ),
@@ -138,12 +140,7 @@ const TrackComp = props => {
   const toggleTrack = async () => {
     if (playbackState === 'playing' || playbackState === 3) {
       await pasueTrack();
-    } else if (
-      playbackState === 'paused' ||
-      playbackState === 2 ||
-      playbackState === 'ready' ||
-      playbackState === 'stopped'
-    ) {
+    } else {
       await playTrack();
     }
   };
@@ -151,7 +148,6 @@ const TrackComp = props => {
   const playBack = async () => {
     const current = await TrackPlayer.getCurrentTrack()
     const track = await TrackPlayer.getTrack(current);
-    const state = await TrackPlayer.getState();
 
     if (track) {
       if (track.title != props?.item.title) {
@@ -168,7 +164,7 @@ const TrackComp = props => {
     <View style={styles.TrackHolder}>
       <Image
         style={styles.image}
-        resizeMode="cover"
+        resizeMode="contain"
         source={props?.item.artwork}
       />
       <Text style={styles.title}>{props?.item.title}</Text>

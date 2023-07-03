@@ -6,6 +6,7 @@ import SplashScreen from "../Assets/Screens/SplashScreen";
 import BottomTabNav from "./BottomTabNav";
 import LoginScreen from "../Assets/Screens/LoginScreen";
 import RegisterScreen from "../Assets/Screens/RegisterScreen";
+import RecoverScreen from "../Assets/Screens/RecoverScreen";
 
 const Stack=createNativeStackNavigator();
 export const SplashStackNav=()=>{
@@ -16,6 +17,7 @@ export const SplashStackNav=()=>{
                 <Stack.Screen name={ScreenNames.AfterSplashScreen} component={AfterSplashScreen} options={{headerShown: false}} />
                 <Stack.Screen name={ScreenNames.Login} component={LoginScreen} options={{headerShown: false}} />
                 <Stack.Screen name={ScreenNames.Register} component={RegisterScreen} options={{headerShown: false}} />
+                <Stack.Screen name={ScreenNames.Recover} component={RecoverScreen} options={{headerShown: false}} />
             </Stack.Navigator>
             </NavigationContainer>
     )

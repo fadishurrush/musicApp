@@ -19,7 +19,6 @@ import TrackPlayer, {
 import ImageCard from '../Components/ImageCard';
 import {Songs as SongsArray} from '../Data/Songs';
 import {ScreenNames} from '../Data/ScreenNames';
-import { useBluetoothHeadsetDetection } from 'react-native-bluetooth-headset-detect';
 
 export const Homescreen = ({navigation}) => {
   const [catagories, setCategories] = useState(Catagories);
@@ -35,7 +34,7 @@ export const Homescreen = ({navigation}) => {
           <Octicons name={'bell'} size={35} color={COLORS.terkwaz} />
         </TouchableOpacity>
         <TouchableOpacity
-        // onPress={()=>navigation.navigate(ScreenNames.History*})}
+        onPress={()=>navigation.navigate(ScreenNames.History)}
         >
           <MaterialIcons name={'history'} size={40} color={COLORS.terkwaz} />
         </TouchableOpacity>
@@ -169,7 +168,7 @@ export const Homescreen = ({navigation}) => {
       data: songs,
       renderItem: renderItem2,
       showsVerticalsScrollIndicator: false,
-      keyExtractor: item => `${item?.id}`,
+      keyExtractor: item => `${item?._id}`,
       contentContainerStyle: {
         paddingHorizontal: SIZES.padding * 2,
         paddingBottom: 30,

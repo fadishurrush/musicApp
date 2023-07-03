@@ -17,7 +17,6 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import MusicContext from '../../store/MusicContext';
 import {COLORS, FONTS} from '../Data/Dimentions';
 import MusicModalComp from './MusicModalComp';
-import { useBluetoothHeadsetDetection } from 'react-native-bluetooth-headset-detect';
 
 const MiniPlayer = () => {
   const {isPlaying, setIsPlaying, currentTrack, modalVisible, setModalVisible} =
@@ -41,17 +40,39 @@ const MiniPlayer = () => {
   }, [playbackState]);
   const playerModes = {
     loading: <ActivityIndicator size={30} />,
+    idle: <ActivityIndicator size={30} />,
+    connecting: <ActivityIndicator size={30} />,
     playing: (
-      <IonIcon style={styles.icon} name={'pause'} color={COLORS.greenesh} size={30} />
+      <IonIcon
+        style={styles.icon}
+        name={'pause'}
+        color={COLORS.greenesh}
+        size={30}
+      />
     ),
     paused: (
-      <IonIcon style={styles.icon} name={'play'} color={COLORS.greenesh} size={30} />
+      <IonIcon
+        style={styles.icon}
+        name={'play'}
+        color={COLORS.greenesh}
+        size={30}
+      />
     ),
-    stopped :(
-      <IonIcon style={styles.icon} name={'play'} color={COLORS.greenesh} size={30} />
+    stopped: (
+      <IonIcon
+        style={styles.icon}
+        name={'play'}
+        color={COLORS.greenesh}
+        size={30}
+      />
     ),
-    ready :(
-      <IonIcon style={styles.icon} name={'play'} color={COLORS.greenesh} size={30} />
+    ready: (
+      <IonIcon
+        style={styles.icon}
+        name={'play'}
+        color={COLORS.greenesh}
+        size={30}
+      />
     ),
   };
 
@@ -67,43 +88,8 @@ const MiniPlayer = () => {
   const getProgress = () => {
     return (position / duration) * 100;
   };
-  const SameCategory = async category => {
-    //filter songs
 
-    let songsList = songsArray.filter(
-      a => a.Category.includes(category) && a.title !== currentTrack.title,
-    );
-    TrackPlayer.add(songsList);
-  };
-  const playNext = async () => {
-    const current = await TrackPlayer.getCurrentTrack();
-    const queue = await TrackPlayer.getQueue();
-    if (queue.length == current + 1) {
-      SameCategory(currentTrack.Category[1]);
-    }
-    await TrackPlayer.skipToNext();
-    const newcurrent = await TrackPlayer.getCurrentTrack();
-     const  track = await TrackPlayer.getTrack(newcurrent);
-    setCurrentTrack(track);
-    await TrackPlayer.play();
-  };
-  const playPrevious = async () => {
-    const current = await TrackPlayer.getCurrentTrack();
-    const queue = await TrackPlayer.getQueue();
-    var track = await TrackPlayer.getTrack(current);
-
-    if (queue.length - 1 == current) {
-      SameCategory(track.Category[1]);
-    }
-    await TrackPlayer.skipToPrevious();
-    current = await TrackPlayer.getCurrentTrack();
-    track = await TrackPlayer.getTrack(current);
-    setCurrentTrack(track);
-    await TrackPlayer.play()
-    
-  };
   return (
-    
     <View style={styles.container}>
       <Modal
         animationType="slide"
@@ -121,22 +107,37 @@ const MiniPlayer = () => {
         <View style={styles.row}>
           <Image style={styles.image} source={currentTrack?.artwork} />
           <View style={styles.vertical}>
-          <View style={styles.text}>
-            <Text style={styles.songname}>{currentTrack?.title}</Text>
-            <Octicons name={'dot-fill'} size={10} color={'white'} />
-            <Text style={styles.songartist}>{currentTrack?.artist}</Text>
-          </View>
-        
-          <View style={styles.text}>
-          <IonIcon style={styles.bluetooth} name={'bluetooth-sharp'} size={20} color={COLORS.terkwaz}/>
-            <Octicons style={styles.dot} name={'dot-fill'} size={10} color={COLORS.terkwaz} />
-            <Text style={styles.songartist}>{useBluetoothHeadsetDetection()}</Text>
+            <View style={styles.text}>
+              <Text style={styles.songname}>{currentTrack?.title}</Text>
+              <Octicons name={'dot-fill'} size={10} color={'white'} />
+              <Text style={styles.songartist}>{currentTrack?.artist}</Text>
             </View>
-          
+
+            <View style={styles.text}>
+              <IonIcon
+                style={styles.bluetooth}
+                name={'bluetooth-sharp'}
+                size={20}
+                color={COLORS.terkwaz}
+              />
+              <Octicons
+                style={styles.dot}
+                name={'dot-fill'}
+                size={10}
+                color={COLORS.terkwaz}
+              />
+              <Text style={styles.songartist}>
+              </Text>
+            </View>
           </View>
           <View style={styles.PressableHolder}>
             <Pressable style={styles.Pressable}>
-              <IonIcon style={styles.icon} name="heart" color={COLORS.greenesh} size={30} />
+              <IonIcon
+                style={styles.icon}
+                name="heart"
+                color={COLORS.greenesh}
+                size={30}
+              />
             </Pressable>
             <Pressable
               style={styles.Pressable}
@@ -171,13 +172,12 @@ const styles = StyleSheet.create({
     height: '100%',
     borderTopLeftRadius: 5,
     borderBottomLeftRadius: 5,
-    
   },
   text: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    flex:1,
+    flex: 1,
     // backgroundColor:'red',
   },
   songname: {
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // backgroundColor:"red",
     justifyContent: 'flex-end',
-    marginRight:'3%'
+    marginRight: '3%',
   },
   Pressable: {
     marginLeft: 10,
@@ -207,18 +207,18 @@ const styles = StyleSheet.create({
     height: 3,
     backgroundColor: COLORS.terkwaz,
   },
-  vertical:{
-    flexDirection:'column',
-    flex:1,
+  vertical: {
+    flexDirection: 'column',
+    flex: 1,
     // backgroundColor:"yellow"
   },
-  bluetooth:{
-    marginBottom:5
+  bluetooth: {
+    marginBottom: 5,
   },
-  dot:{
-    margin:2,
-    marginBottom:8
-  }
+  dot: {
+    margin: 2,
+    marginBottom: 8,
+  },
 });
 
 export default MiniPlayer;
