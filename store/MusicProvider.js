@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import TrackPlayer from 'react-native-track-player';
 import MusicContext from './MusicContext';
-import {Songs} from '../Assets/Data/Songs';
 
 const MusicProvider = props => {
   

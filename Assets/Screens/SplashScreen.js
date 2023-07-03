@@ -1,6 +1,6 @@
 import {Text, View} from 'react-native';
 import {ScreenNames} from '../Data/ScreenNames';
-import { useEffect } from 'react';
+import {  useEffect } from 'react';
 import { Songs as SongsArray } from '../Data/Songs';
 import {urls} from '../../api/urls'
 const SplashScreen = ({navigation}) => {

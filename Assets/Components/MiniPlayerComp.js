@@ -17,6 +17,7 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import MusicContext from '../../store/MusicContext';
 import {COLORS, FONTS} from '../Data/Dimentions';
 import MusicModalComp from './MusicModalComp';
+import { Songs } from '../Data/Songs';
 
 const MiniPlayer = () => {
   const {isPlaying, setIsPlaying, currentTrack, modalVisible, setModalVisible} =
@@ -36,6 +37,7 @@ const MiniPlayer = () => {
     }
   };
   useEffect(() => {
+    console.log(Songs.includes(currentTrack));
     setIsPlaying(playbackState);
   }, [playbackState]);
   const playerModes = {
@@ -135,7 +137,7 @@ const MiniPlayer = () => {
               <IonIcon
                 style={styles.icon}
                 name="heart"
-                color={COLORS.greenesh}
+                color= {Songs.includes(currentTrack) ? COLORS.greenesh :COLORS.lightGray}
                 size={30}
               />
             </Pressable>

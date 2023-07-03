@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -14,13 +14,14 @@ import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import {ScreenNames} from '../Data/ScreenNames';
 import {urls} from '../../api/urls';
 import {useNavigation} from '@react-navigation/native';
+import UserContext from '../../store/UserContext';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setpassword] = useState('');
   const [isSecured, setIsSecured] = useState(true);
   const [indicatorOn, setindicatorOn] = useState(false);
-
+  const {setCurrentUserEmail} = useContext(UserContext)
   const navigation = useNavigation();
   const recover = () => {    navigation.navigate(ScreenNames.Recover);
   };
@@ -46,6 +47,7 @@ const LoginScreen = () => {
         if (!resJson.user) {
           Alert.alert(resJson?.message);
         } else {
+          setCurrentUserEmail(email)
           navigation.replace(ScreenNames.AfterSplashScreen);
         }
       })

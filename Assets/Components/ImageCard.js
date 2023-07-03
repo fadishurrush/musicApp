@@ -18,7 +18,7 @@ const ImageCard = props => {
         {/* image */}
         <Image
           source={props.item.artwork}
-          resizeMode="cover"
+          resizeMode="contain"
           style={styles.Image}
         />
         {/* song name */}
