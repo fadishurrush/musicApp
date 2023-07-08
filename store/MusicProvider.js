@@ -4,7 +4,6 @@ import MusicContext from './MusicContext';
 const MusicProvider = props => {
   
   const [isPlaying, setIsPlaying] = useState('loading');
-  const [tracks, settracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const today = new Date();
@@ -20,8 +19,6 @@ const MusicProvider = props => {
         setModalVisible,
         today,
         History,
-        tracks,
-        settracks,
       }}>
       {props.children}
     </MusicContext.Provider>

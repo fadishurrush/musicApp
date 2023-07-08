@@ -3,14 +3,15 @@ import { COLORS, FONTS, SIZES } from "../Data/Dimentions";
 import { useContext } from "react";
 import MusicContext from "../../store/MusicContext";
 import TrackComp from "../Components/TrackComp";
+import UserContext from "../../store/UserContext";
 
 
 
 const LibraryScreen = ({navigation}) =>{
-    const {tracks,settracks} = useContext(MusicContext)
+    const {userFavorites,setUserFavorites} = useContext(UserContext)
     const params = {
         FlatList:{
-            data: tracks,
+            data: userFavorites,
             renderItem: renderItem,
             showsHorizontalScrollIndicator: false,
             contentContainerStyle: {paddingVertical: SIZES.padding * 2},
@@ -18,6 +19,7 @@ const LibraryScreen = ({navigation}) =>{
         }
     }
     const renderItem = ({item}) => {
+        console.log("useFAv",userFavorites);
         return <TrackComp item={item} />;
          
       };

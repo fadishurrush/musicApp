@@ -17,11 +17,15 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import MusicContext from '../../store/MusicContext';
 import {COLORS, FONTS} from '../Data/Dimentions';
 import MusicModalComp from './MusicModalComp';
-import { Songs } from '../Data/Songs';
+import {Songs} from '../Data/Songs';
+import UserContext from '../../store/UserContext';
+import {urls} from '../../api/urls';
 
 const MiniPlayer = () => {
   const {isPlaying, setIsPlaying, currentTrack, modalVisible, setModalVisible} =
     useContext(MusicContext);
+  const {userFavorites, setUserFavorites, currentUserEmail} =
+    useContext(UserContext);
   const playbackState = usePlaybackState();
   const {position, duration} = useProgress();
   const toggleTrack = async () => {
@@ -37,7 +41,6 @@ const MiniPlayer = () => {
     }
   };
   useEffect(() => {
-    console.log(Songs.includes(currentTrack));
     setIsPlaying(playbackState);
   }, [playbackState]);
   const playerModes = {
@@ -90,6 +93,32 @@ const MiniPlayer = () => {
   const getProgress = () => {
     return (position / duration) * 100;
   };
+  const Favorite = async () => {
+    await fetch(urls.setFav, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: currentTrack.title,
+        userEmail: currentUserEmail.toLowerCase(),
+      }),
+    })
+      .then(val => {
+        console.log("val before json",val);
+        val = val.json();
+        console.log('val ', val);
+        if (userFavorites.includes(currentTrack)) {
+          var temp = userFavorites.filter(
+            val => val.title !== currentTrack.title,
+          );
+          setUserFavorites(temp);
+        } else {
+          setUserFavorites([...userFavorites, currentTrack]);
+        }
+      })
+      .catch(e => console.log('setfav error ', e));
+  };
 
   return (
     <View style={styles.container}>
@@ -128,16 +157,19 @@ const MiniPlayer = () => {
                 size={10}
                 color={COLORS.terkwaz}
               />
-              <Text style={styles.songartist}>
-              </Text>
+              <Text style={styles.songartist}></Text>
             </View>
           </View>
           <View style={styles.PressableHolder}>
-            <Pressable style={styles.Pressable}>
+            <Pressable style={styles.Pressable} onPress={() => Favorite()}>
               <IonIcon
                 style={styles.icon}
-                name="heart"
-                color= {Songs.includes(currentTrack) ? COLORS.greenesh :COLORS.lightGray}
+                name={
+                  userFavorites.includes(currentTrack)
+                    ? 'heart'
+                    : 'heart-outline'
+                }
+                color={COLORS.greenesh}
                 size={30}
               />
             </Pressable>

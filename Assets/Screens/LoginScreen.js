@@ -21,9 +21,10 @@ const LoginScreen = () => {
   const [password, setpassword] = useState('');
   const [isSecured, setIsSecured] = useState(true);
   const [indicatorOn, setindicatorOn] = useState(false);
-  const {setCurrentUserEmail} = useContext(UserContext)
+  const {setCurrentUserEmail,userFavorites,currentUserEmail,setUserFavorites} = useContext(UserContext);
   const navigation = useNavigation();
-  const recover = () => {    navigation.navigate(ScreenNames.Recover);
+  const recover = () => {
+    navigation.navigate(ScreenNames.Recover);
   };
   const register = () => {
     navigation.navigate(ScreenNames.Register);
@@ -42,13 +43,25 @@ const LoginScreen = () => {
       `${urls.Login}?email=${email.toLowerCase()}&password=${password}`,
     )
       .then(res => res.json())
-      .then(resJson => {
-        setindicatorOn(false);
+      .then(async(resJson) => {
         if (!resJson.user) {
+          setindicatorOn(false);
           Alert.alert(resJson?.message);
         } else {
-          setCurrentUserEmail(email)
+          await fetch(`${urls.getFav}?email=${email.toLowerCase()}`)
+        .then(favres => favres.json())
+        .then(favresJson => {
+          console.log("favresjson",favresJson);
+          if(favresJson.Favorites){
+            setUserFavorites(favresJson.Favorites)
+            console.log("userFav",userFavorites);
+          } 
+          setindicatorOn(false);
+          setCurrentUserEmail(email);
+          console.log("email",currentUserEmail);
           navigation.replace(ScreenNames.AfterSplashScreen);
+        }).catch((e)=>console.log("get fav error ->",e))
+          
         }
       })
       .catch(e => {

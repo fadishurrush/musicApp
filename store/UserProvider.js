@@ -7,15 +7,7 @@ const UserProvider = props => {
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
   const [userFavorites, setUserFavorites] = useState([]);
 
-  useEffect(() => {
-    try {
-      fetch(`${urls.getFav}?email=${currentUserEmail.toLowerCase()}`)
-        .then(res => res.json())
-        .then(resJson => {
-          resJson.isArray() ? setUserFavorites(resJson.Favorites) : null;
-        });
-    } catch (error) {}
-  }, [currentUserEmail]);
+
 
   return (
     <UserContext.Provider
@@ -23,7 +15,7 @@ const UserProvider = props => {
         currentUserEmail,
         setCurrentUserEmail,
         userFavorites,
-        setCurrentUserEmail,
+        setUserFavorites,
       }}>
       {props.children}
     </UserContext.Provider>

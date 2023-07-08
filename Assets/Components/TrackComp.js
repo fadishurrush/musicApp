@@ -12,11 +12,10 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import MusicContext from '../../store/MusicContext';
 import {FONTS, COLORS} from '../Data/Dimentions';
 import {Songs as songsArray} from '../Data/Songs';
+import UserContext from '../../store/UserContext';
+import { urls } from '../../api/urls';
 
 const TrackComp = props => {
-  const [heartname, setheartname] = useState('heart-outline');
-  const [heartcolor, setheartcolor] = useState('black');
-
   const playbackState = usePlaybackState();
   const {
     isPlaying,
@@ -26,6 +25,7 @@ const TrackComp = props => {
     History,
     today,
   } = useContext(MusicContext);
+  const {userFavorites,setUserFavorites,currentUserEmail} = useContext(UserContext)
 
   const SameCategory = category => {
     //filter songs
@@ -98,16 +98,13 @@ const TrackComp = props => {
         body: JSON.stringify(newDay),
       })
         .then(res => res.json())
-        .then(data => {
-        })
+        .then(data => {})
         .catch(e => {
           console.log('error ', e);
         });
     } else {
       var {song} = History;
-      song?.includes(props?.item)
-        ? null
-        : song?.add(props?.item);
+      song?.includes(props?.item) ? null : song?.add(props?.item);
     }
   };
   const addNewItemToTrack = async () => {
@@ -146,7 +143,7 @@ const TrackComp = props => {
   };
 
   const playBack = async () => {
-    const current = await TrackPlayer.getCurrentTrack()
+    const current = await TrackPlayer.getCurrentTrack();
     const track = await TrackPlayer.getTrack(current);
 
     if (track) {
@@ -159,6 +156,32 @@ const TrackComp = props => {
       await addNewItemToTrack();
     }
   };
+  const Favorite = async () => {
+    console.log("current fav",userFavorites);
+    await fetch(urls.setFav, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: props?.item.title,
+        userEmail: currentUserEmail.toLowerCase(),
+      }),
+    })
+      .then(val => {
+        val = val.json();
+        console.log('val ', val);
+        if (userFavorites.includes(props?.item)) {
+          var temp = userFavorites.filter(
+            val => val.title !== props?.item.title,
+          );
+          setUserFavorites(temp);
+        } else {
+          setUserFavorites([...userFavorites, currentTrack]);
+        }
+      })
+      .catch(e => console.log('setfav error ', e));
+  };
 
   return (
     <View style={styles.TrackHolder}>
@@ -169,11 +192,11 @@ const TrackComp = props => {
       />
       <Text style={styles.title}>{props?.item.title}</Text>
       <View style={styles.PressableHolder}>
-        <Pressable style={styles.Pressable}>
+        <Pressable style={styles.Pressable} onPress={()=>Favorite()}>
           <IonIcon
             style={styles.icon}
-            name={heartname}
-            color={heartcolor}
+            name={userFavorites.includes(props?.item) ? "heart" : "heart-outline"}
+            color={userFavorites.includes(props?.item) ? "black" : "black"}
             size={30}
           />
         </Pressable>

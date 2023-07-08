@@ -37,7 +37,7 @@ const MusicModalComp = () => {
           </Pressable>
           <Image
             style={styles.Img}
-            resizeMode="cover"
+            resizeMode="contain"
             source={currentTrack?.artwork}></Image>
           <Text style={styles.songname}>{currentTrack?.title}</Text>
           <Text style={styles.songartist}>{currentTrack?.artist}</Text>
@@ -47,6 +47,11 @@ const MusicModalComp = () => {
           <COntroller />
         </View>
         <Text style={styles.lyricTitle}>Lyrics</Text>
+        <Text>
+
+        {currentTrack.Lyrics ? currentTrack.Lyrics : "there is no available lyrics for this song"}
+        </Text>
+        
         <View style={styles.lyricsContainer}></View>
       </ScrollView>
     </ImageBackground>
