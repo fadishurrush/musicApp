@@ -1,6 +1,7 @@
 import React from 'react';
 import {TouchableOpacity, View, Image, Text, StyleSheet} from 'react-native';
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
+import AnimatedLottieView from 'lottie-react-native';
 
 const ImageCard = props => {
   const duration = () => {
@@ -30,9 +31,11 @@ const ImageCard = props => {
           <Text style={styles.TextSongName}>{props.item.title}</Text>
           <Text style={styles.TextArtistName}>{props.item.artist}</Text>
         </View>
-        <View style={{alignSelf: 'center'}}>
+        <View style={styles.time}>
           <Text style={styles.TextSongTime}>{duration()}</Text>
+        <AnimatedLottieView style={styles.clock} source={require('../lottie/timer.json')} autoPlay />
         </View>
+
       </View>
     </View>
   );
@@ -58,12 +61,20 @@ const styles = StyleSheet.create({
   },
   TextSongTime: {
     color: COLORS.darkerterkwaz,
-    // alignSelf: 'baseline',
+    alignSelf: 'center',
     ...FONTS.h4,
     // marginBottom:10,
     textDecorationLine: 'underline',
     // textDecorationStyle:'double'
+    marginHorizontal:'5%'
   },
+  clock:{
+    marginLeft:'5%'
+  },
+  time:{
+    flexDirection:'row',
+    width:'30%',
+  }
 });
 
 export default ImageCard;

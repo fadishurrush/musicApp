@@ -48,7 +48,7 @@ const SplashScreen = ({navigation}) => {
   },[])
   return (
     <View style={{flex:1}}>
-      <AnimatedLottieView source={require('../lottie/1st_Logo_MusicApp.mp4.lottie.json')} autoPlay loop={false}/>
+      <AnimatedLottieView style={{backgroundColor:'black'}}source={require('../lottie/1st_Logo_MusicApp.mp4.lottie.json')} autoPlay loop={false}/>
     </View>
   )
 };

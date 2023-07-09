@@ -98,51 +98,6 @@ export const Homescreen = ({navigation}) => {
     }
   }, []);
 
-  const onSelectCategory = category => {
-    //filter songs
-    let songsList = SongsArray.filter(a => a.Category.includes(category.id));
-
-    setSongs(songsList);
-    setSelectedCategory(category);
-  };
-
-  // const getCategoryNameById = id => {
-  //   let category = categories.filter(a => a.id == id);
-
-  //   if (category.length > 0) return category[0].name;
-
-  //   return '';
-  // };
-  const renderItem = ({item}) => {
-    return (
-      <TouchableOpacity
-        style={styles.Touchable}
-        onPress={() => onSelectCategory(item)}>
-        <Text
-          style={[
-            styles.CateText,
-            {
-              color:
-                selectedCategory?.id == item.id
-                  ? COLORS.secondary
-                  : COLORS.terkwaz,
-            },
-          ]}>
-          {item.name}
-        </Text>
-        <Octicons
-          name={selectedCategory?.id == item.id ? 'dot-fill' : 'dot'}
-          color={
-            selectedCategory?.id == item.id
-              ? COLORS.secondary
-              : COLORS.transparent
-          }
-          size={15}
-        />
-      </TouchableOpacity>
-    );
-  };
-
   const renderItem2 = ({item}) => {
     return (
       <TouchableOpacity
@@ -155,15 +110,7 @@ export const Homescreen = ({navigation}) => {
   };
 
   const params = {
-    CateFlatList: {
-      horizontal: true,
-      data: catagories,
-      renderItem: renderItem,
-      showsHorizontalScrollIndicator: false,
-      keyExtractor: item => `${item?.id}`,
-      contentContainerStyle: {paddingVertical: SIZES.padding * 2},
-      style: {...styles.CateFlatList},
-    },
+
     SongFlatList: {
       data: songs,
       renderItem: renderItem2,
@@ -185,8 +132,7 @@ export const Homescreen = ({navigation}) => {
         {WelcomingText()}
         {MainIcons()}
       </View>
-      <FlatList {...params.CateFlatList} />
-      <FlatList {...params.SongFlatList} />
+      <FlatList  {...params.SongFlatList} />
       {/* <MiniPlayComp /> */}
       {/* play buttons comp */}
       {/* <PlayButtonsComp /> */}
@@ -245,6 +191,8 @@ const styles = StyleSheet.create({
   },
   SongFlatList: {
     // backgroundColor:'yellow',
+    marginTop:'5%',
+    marginHorizontal:'5%'
   },
   playButtonsHolder: {
     flexDirection: 'row',
