@@ -6,5 +6,6 @@ const baseurl = "https://mozikapp.onrender.com"
     getAllSongs:baseurl+"/getAllSongs",
     getFav:baseurl+"/getFav",
     setFav:baseurl+"/setFav",
+    AccountRecover:baseurl+"/AccountRecover"
 }
 

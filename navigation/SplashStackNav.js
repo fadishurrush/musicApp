@@ -14,10 +14,10 @@ export const SplashStackNav=()=>{
         <NavigationContainer>
             <Stack.Navigator>
                 <Stack.Screen name={ScreenNames.Splash} component={SplashScreen} />
-                <Stack.Screen name={ScreenNames.AfterSplashScreen} component={AfterSplashScreen} options={{headerShown: false}} />
+                <Stack.Screen name={ScreenNames.AfterSplashScreen} component={AfterSplashScreen} options={{headerShown: false , animation:'fade'}} />
                 <Stack.Screen name={ScreenNames.Login} component={LoginScreen} options={{headerShown: false}} />
-                <Stack.Screen name={ScreenNames.Register} component={RegisterScreen} options={{headerShown: false}} />
-                <Stack.Screen name={ScreenNames.Recover} component={RecoverScreen} options={{headerShown: false}} />
+                <Stack.Screen name={ScreenNames.Register} component={RegisterScreen} options={{headerShown: false,animation:'slide_from_bottom'}} />
+                <Stack.Screen name={ScreenNames.Recover} component={RecoverScreen} options={{headerShown: false , animation:'slide_from_right',presentation:'transparentModal'}} />
             </Stack.Navigator>
             </NavigationContainer>
     )
