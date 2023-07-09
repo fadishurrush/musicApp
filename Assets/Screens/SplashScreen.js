@@ -3,6 +3,7 @@ import {ScreenNames} from '../Data/ScreenNames';
 import {  useEffect } from 'react';
 import { Songs as SongsArray } from '../Data/Songs';
 import {urls} from '../../api/urls'
+import AnimatedLottieView from 'lottie-react-native';
 const SplashScreen = ({navigation}) => {
   useEffect(()=>{
     fetch(urls.getAllSongs)
@@ -17,12 +18,12 @@ const SplashScreen = ({navigation}) => {
     setTimeout(() => {
       console.log("Array ->",SongsArray);
       navigation.replace(ScreenNames.Login);
-    }, 1500);
+    }, 4540);
     
         }else{console.log('response was null');
         setTimeout(() => {
           navigation.replace(ScreenNames.Login);
-        }, 1500);
+        }, 4540);
       }
       })
       .catch(e => {
@@ -45,13 +46,9 @@ const SplashScreen = ({navigation}) => {
 //   }, 1500))
     
   },[])
-  
-  setTimeout(() => {
-            navigation.replace(ScreenNames.Login);
-          }, 3000);
   return (
     <View style={{flex:1}}>
-  <Text style={{color:'black'}}>this is splash Screen</Text>
+      <AnimatedLottieView source={require('../lottie/1st_Logo_MusicApp.mp4.lottie.json')} autoPlay loop={false}/>
     </View>
   )
 };
