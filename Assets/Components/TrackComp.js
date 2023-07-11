@@ -158,7 +158,9 @@ const TrackComp = props => {
   };
   const Favorite = async () => {
     console.log("current fav",userFavorites);
-    await fetch(urls.setFav, {
+    console.log("user email",currentUserEmail);
+    console.log("song ",props.item.title);
+     fetch(urls.setFav, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -169,7 +171,6 @@ const TrackComp = props => {
       }),
     })
       .then(val => {
-        val = val.json();
         console.log('val ', val);
         if (userFavorites.includes(props?.item)) {
           var temp = userFavorites.filter(

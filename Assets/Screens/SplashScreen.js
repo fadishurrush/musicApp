@@ -1,56 +1,50 @@
 import {Text, View} from 'react-native';
 import {ScreenNames} from '../Data/ScreenNames';
-import {  useEffect } from 'react';
-import { Songs as SongsArray } from '../Data/Songs';
-import {urls} from '../../api/urls'
+import {useEffect} from 'react';
+import {Songs as SongsArray} from '../Data/Songs';
+import {urls} from '../../api/urls';
 import AnimatedLottieView from 'lottie-react-native';
+import { GetAllSongs } from '../../api/api';
+
 const SplashScreen = ({navigation}) => {
-  useEffect(()=>{
-    fetch(urls.getAllSongs)
-      .then(res => res.json())
-      .then(resJson => {
-        if(resJson){
-          resJson?.all.forEach(element => {
-            element.artwork = {uri : element.artwork}
-            delete element['__v'];
-            SongsArray.push(element)
-          })
+
+  const timeout=()=>{
     setTimeout(() => {
-      console.log("Array ->",SongsArray);
       navigation.replace(ScreenNames.Login);
     }, 4540);
-    
-        }else{console.log('response was null');
-        setTimeout(() => {
-          navigation.replace(ScreenNames.Login);
-        }, 4540);
-      }
-      })
-      .catch(e => {
-        console.log('fetch error , ', e);
-      });
-
-//   var songurl =
-//   'https://mozikapp.onrender.com/getSong?title=Clouds';
-// fetch(songurl)
-//   .then(res => res.json())
-//   .then(resJson => {
-//     console.log('resJson ', resJson);
-//     track = resJson;
-//     track.artwork = {uri: track.artwork};
-
-//     SongsArray.push(track);
-//     console.log('songs array after -> ', SongsArray)
-//   }).then(setTimeout(() => {
-//     navigation.replace(ScreenNames.AfterSplashScreen);
-//   }, 1500))
-    
-  },[])
+  }
+  useEffect(() => {
+    SongsArray.length == 0
+      ? GetAllSongs()
+          .then(resJson => {
+            if (resJson) {
+              resJson?.all.forEach(element => {
+                element.artwork = {uri: element.artwork};
+                delete element['__v'];
+                SongsArray.push(element);
+              });
+              timeout()
+            } else {
+              console.log('response was null');
+              timeout()
+            }
+          })
+          .catch(e => {
+            timeout()
+            console.log('fetch error , ', e);
+          })
+      : timeout()
+  }, []);
   return (
-    <View style={{flex:1}}>
-      <AnimatedLottieView style={{backgroundColor:'black'}}source={require('../lottie/1st_Logo_MusicApp.mp4.lottie.json')} autoPlay loop={false}/>
+    <View style={{flex: 1}}>
+      <AnimatedLottieView
+        style={{backgroundColor: 'black'}}
+        source={require('../lottie/1st_Logo_MusicApp.mp4.lottie.json')}
+        autoPlay
+        loop={false}
+      />
     </View>
-  )
+  );
 };
 
 export default SplashScreen;

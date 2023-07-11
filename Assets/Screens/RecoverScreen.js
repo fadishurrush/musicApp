@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {
-    Alert,
+  Alert,
   Image,
   ImageBackground,
   StyleSheet,
@@ -11,31 +11,29 @@ import {
 } from 'react-native';
 import {COLORS, FONTS} from '../Data/Dimentions';
 import {ScreenNames} from '../Data/ScreenNames';
-import { urls } from '../../api/urls';
+import {urls} from '../../api/urls';
+import Regs from '../Regs';
 
 const RecoverScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
 
   const checkEmail = async () => {
-    let emailreg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     console.log('recover pressed');
     if (email.trim().length == 0) {
       Alert.alert('email field is empty');
       return;
-    }else if(emailreg.test(email) === false){
-        Alert.alert('enter a proper email');
-    }else{
-    
-        await requestEmailRecover()
+    } else if (Regs.email.test(email) === false) {
+      Alert.alert('enter a proper email');
+      return;
+    } else {
+      await requestEmailRecover();
     }
   };
-// needs a domain to power up the recover method
-  const requestEmailRecover=async()=>{
+  // needs a domain to power up the recover method
+  const requestEmailRecover = async () => {
     try {
-    } catch (error) {
-        
-    }
-  }
+    } catch (error) {}
+  };
   return (
     <ImageBackground
       source={require('../BackGroundImages/loginbackground.jpg')}

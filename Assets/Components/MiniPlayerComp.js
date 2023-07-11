@@ -17,13 +17,19 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import MusicContext from '../../store/MusicContext';
 import {COLORS, FONTS} from '../Data/Dimentions';
 import MusicModalComp from './MusicModalComp';
-import {Songs} from '../Data/Songs';
 import UserContext from '../../store/UserContext';
-import {urls} from '../../api/urls';
+import AnimatedLottieView from 'lottie-react-native';
+import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
 
 const MiniPlayer = () => {
-  const {isPlaying, setIsPlaying, currentTrack, modalVisible, setModalVisible} =
-    useContext(MusicContext);
+  const {
+    isPlaying,
+    setIsPlaying,
+    currentTrack,
+    modalVisible,
+    setModalVisible,
+    setCurrentTrack,
+  } = useContext(MusicContext);
   const {userFavorites, setUserFavorites, currentUserEmail} =
     useContext(UserContext);
   const playbackState = usePlaybackState();
@@ -48,11 +54,9 @@ const MiniPlayer = () => {
     idle: <ActivityIndicator size={30} />,
     connecting: <ActivityIndicator size={30} />,
     playing: (
-      <IonIcon
-        style={styles.icon}
-        name={'pause'}
-        color={COLORS.greenesh}
-        size={30}
+      <AnimatedLottieView
+        source={require('../lottie/sound-voice-waves.json')}
+        autoPlay
       />
     ),
     paused: (
@@ -94,20 +98,8 @@ const MiniPlayer = () => {
     return (position / duration) * 100;
   };
   const Favorite = async () => {
-    await fetch(urls.setFav, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: currentTrack.title,
-        userEmail: currentUserEmail.toLowerCase(),
-      }),
-    })
+    setUserFavorites()
       .then(val => {
-        console.log("val before json",val);
-        val = val.json();
-        console.log('val ', val);
         if (userFavorites.includes(currentTrack)) {
           var temp = userFavorites.filter(
             val => val.title !== currentTrack.title,
@@ -119,9 +111,36 @@ const MiniPlayer = () => {
       })
       .catch(e => console.log('setfav error ', e));
   };
+  const SameCategory = async category => {
+    //filter songs
 
-  return (
-    <View style={styles.container}>
+    let songsList = songsArray.filter(
+      a => a.Category.includes(category) && a.title !== currentTrack.title,
+    );
+    TrackPlayer.add(songsList);
+  };
+  const playNext = async () => {
+    const current = await TrackPlayer.getCurrentTrack();
+    const queue = await TrackPlayer.getQueue();
+    if (queue.length == current + 1) {
+      SameCategory(currentTrack.Category[1]);
+    }
+    await TrackPlayer.skipToNext();
+    const newcurrent = await TrackPlayer.getCurrentTrack();
+    const track = await TrackPlayer.getTrack(newcurrent);
+    setCurrentTrack(track);
+    await TrackPlayer.play();
+  };
+  const playPrevious = async () => {
+    await TrackPlayer.skipToPrevious();
+    current = await TrackPlayer.getCurrentTrack();
+    track = await TrackPlayer.getTrack(current);
+    setCurrentTrack(track);
+    await TrackPlayer.play();
+  };
+
+  const MusicModal = () => {
+    return (
       <Modal
         animationType="slide"
         transparent={true}
@@ -131,55 +150,88 @@ const MiniPlayer = () => {
         }}>
         <MusicModalComp />
       </Modal>
+    );
+  };
+
+  // const imageRender=()=>{
+  //   return(
+
+  //   )
+  // }
+
+  const HeartIconPress = () => {
+    return (
+      <Pressable style={styles.Pressable} onPress={() => Favorite()}>
+        <IonIcon
+          style={styles.icon}
+          name={
+            userFavorites.includes(currentTrack) ? 'heart' : 'heart-outline'
+          }
+          color={COLORS.greenesh}
+          size={30}
+        />
+      </Pressable>
+    );
+  };
+
+  const PlayIconRender = () => {
+    return (
+      <Pressable style={styles.Pressable} onPress={async () => toggleTrack()}>
+        {playerModes[isPlaying]}
+      </Pressable>
+    );
+  };
+
+  const detailes = () => (
+    <View style={styles.row}>
+      {/* image */}
+      <Image style={styles.image} source={currentTrack?.artwork} />
+      <View style={styles.vertical}>
+        {/* title */}
+        <View style={styles.text}>
+          {/* artist name */}
+          <Text style={styles.songname}>{currentTrack?.title}</Text>
+          <Octicons name={'dot-fill'} size={10} color={'white'} />
+          <Text style={styles.songartist}>{currentTrack?.artist}</Text>
+        </View>
+        {/* bluetooth icon */}
+        <View style={styles.text}>
+          <IonIcon
+            style={styles.bluetooth}
+            name={'bluetooth-sharp'}
+            size={20}
+            color={COLORS.terkwaz}
+          />
+          {/* dot icon */}
+          <Octicons
+            style={styles.dot}
+            name={'dot-fill'}
+            size={10}
+            color={COLORS.terkwaz}
+          />
+          <Text style={styles.songartist}></Text>
+        </View>
+      </View>
+      {/* heart icon */}
+      <View style={styles.PressableHolder}>
+        {HeartIconPress()}
+        {PlayIconRender()}
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      {/* music pop up page */}
+      {MusicModal()}
+
       <Pressable
         style={{flex: 1}}
         onPress={() => setModalVisible(!modalVisible)}>
+        {/* progress bar */}
         <View style={[styles.progress, {width: `${getProgress()}%`}]} />
-        <View style={styles.row}>
-          <Image style={styles.image} source={currentTrack?.artwork} />
-          <View style={styles.vertical}>
-            <View style={styles.text}>
-              <Text style={styles.songname}>{currentTrack?.title}</Text>
-              <Octicons name={'dot-fill'} size={10} color={'white'} />
-              <Text style={styles.songartist}>{currentTrack?.artist}</Text>
-            </View>
-
-            <View style={styles.text}>
-              <IonIcon
-                style={styles.bluetooth}
-                name={'bluetooth-sharp'}
-                size={20}
-                color={COLORS.terkwaz}
-              />
-              <Octicons
-                style={styles.dot}
-                name={'dot-fill'}
-                size={10}
-                color={COLORS.terkwaz}
-              />
-              <Text style={styles.songartist}></Text>
-            </View>
-          </View>
-          <View style={styles.PressableHolder}>
-            <Pressable style={styles.Pressable} onPress={() => Favorite()}>
-              <IonIcon
-                style={styles.icon}
-                name={
-                  userFavorites.includes(currentTrack)
-                    ? 'heart'
-                    : 'heart-outline'
-                }
-                color={COLORS.greenesh}
-                size={30}
-              />
-            </Pressable>
-            <Pressable
-              style={styles.Pressable}
-              onPress={async () => toggleTrack()}>
-              {playerModes[isPlaying]}
-            </Pressable>
-          </View>
-        </View>
+        {/* detailes */}
+        {detailes()}
       </Pressable>
     </View>
   );
@@ -236,6 +288,11 @@ const styles = StyleSheet.create({
   },
   Pressable: {
     marginLeft: 10,
+    // backgroundColor:'red',
+    height: '100%',
+    width: '20%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   progress: {
     height: 3,

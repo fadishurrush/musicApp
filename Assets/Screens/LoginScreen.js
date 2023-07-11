@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -12,68 +12,140 @@ import {
 } from 'react-native';
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import {ScreenNames} from '../Data/ScreenNames';
-import {urls} from '../../api/urls';
 import {useNavigation} from '@react-navigation/native';
 import UserContext from '../../store/UserContext';
+import {GetUserFavorites, LoginReq} from '../../api/api';
+import Regs from '../Regs';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setpassword] = useState('');
   const [isSecured, setIsSecured] = useState(true);
   const [indicatorOn, setindicatorOn] = useState(false);
-  const {setCurrentUserEmail,userFavorites,currentUserEmail,setUserFavorites} = useContext(UserContext);
+  const {setCurrentUserEmail, setUserFavorites} = useContext(UserContext);
   const navigation = useNavigation();
+
   const recover = () => {
     navigation.navigate(ScreenNames.Recover);
   };
+
   const register = () => {
     navigation.navigate(ScreenNames.Register);
   };
+
+  const inputValidationError = () => {
+    let email_pass_isEmpty =
+      email.trim().length == 0 || password.trim().length == 0;
+    if (email_pass_isEmpty) {
+      // Alert.alert('some fields are empty');
+      return 'some fields are empty';
+    } else if (Regs.email.test(email) === false) {
+      // Alert.alert();
+      return 'enter a proper email';
+    }
+
+    return false;
+  };
+
+  const getUserFavoratesFromApi = async () => {
+    await GetUserFavorites.then(favresJson => {
+      if (favresJson.Favorites) {
+        setUserFavorites(favresJson.Favorites);
+      }
+      setCurrentUserEmail(email);
+      navigation.replace(ScreenNames.AfterSplashScreen);
+    }).catch(e => console.log('get fav error ->', e));
+  };
+
   const Login = async () => {
-    let emailreg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-    console.log('login pressed');
-    if (email.trim().length == 0 || password.trim().length == 0) {
-      Alert.alert('some fields are empty');
+    //TODO:
+    //      make out side functions
+
+    let valedationError = inputValidationError();
+    if (valedationError) {
+      Alert.alert(valedationError);
       return;
-    } else if (emailreg.test(email) === false) {
-      Alert.alert('enter a proper email');
     }
     setindicatorOn(true);
-    await fetch(
-      `${urls.Login}?email=${email.toLowerCase()}&password=${password}`,
-    )
-      .then(res => res.json())
-      .then(async(resJson) => {
+    LoginReq(email, password)
+      .then(resJson => {
+        setindicatorOn(false);
         if (!resJson.user) {
-          setindicatorOn(false);
           Alert.alert(resJson?.message);
-        } else {
-          await fetch(`${urls.getFav}?email=${email.toLowerCase()}`)
-        .then(favres => favres.json())
-        .then(favresJson => {
-          console.log("favresjson",favresJson);
-          if(favresJson.Favorites){
-            setUserFavorites(favresJson.Favorites)
-            console.log("userFav",userFavorites);
-          } 
-          setindicatorOn(false);
-          setCurrentUserEmail(email);
-          console.log("email",currentUserEmail);
-          navigation.replace(ScreenNames.AfterSplashScreen);
-        }).catch((e)=>console.log("get fav error ->",e))
-          
+          return;
         }
+        getUserFavoratesFromApi();
       })
       .catch(e => {
+        setindicatorOn(false);
         console.log('login error', e);
       });
   };
+  const LoginButton = () => {
+    return (
+      <TouchableOpacity
+        style={styles.LoginButton}
+        onPress={async () => await Login()}>
+        <Text style={styles.LoginText}>Login</Text>
+      </TouchableOpacity>
+    );
+  };
 
-  return (
-    <ImageBackground
-      source={require('../BackGroundImages/loginbackground.jpg')}
-      style={styles.background}
-      resizeMode="stretch">
+  const RecoverButton = () => {
+    return (
+      <View style={styles.forgotPassContainer}>
+        <Text style={styles.forgotPass}>Forgot Password?</Text>
+        <TouchableOpacity onPress={() => recover()}>
+          <Text style={styles.forgotPassLink}>Recover here</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const InputTextEmail = () => {
+    return (
+      <View style={styles.container}>
+        <View style={styles.searchBarClicked}>
+          <TextInput
+            placeholderTextColor={COLORS.darkerterkwaz}
+            onChangeText={setEmail}
+            value={email}
+            style={styles.input}
+            placeholder="Email..."
+          />
+        </View>
+      </View>
+    );
+  };
+
+  const InputTextPassword = () => {
+    return (
+      <View style={styles.container}>
+        <View style={styles.searchBarClicked}>
+          <TextInput
+            // value={passwordhidden}
+            secureTextEntry={isSecured}
+            onChangeText={setpassword}
+            value={password}
+            placeholderTextColor={COLORS.darkerterkwaz}
+            style={styles.input}
+            placeholder="Password..."
+          />
+          <TouchableOpacity
+            onPress={() => {
+              setIsSecured(!isSecured);
+            }}>
+            <Text style={{marginRight: '4%'}}>
+              {isSecured ? 'Show' : 'hide'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
+  const LoadingModal = () => {
+    return (
       <Modal animationType="fade" transparent={true} visible={indicatorOn}>
         <View style={styles.loadingContainer}>
           <View style={styles.Dialog}>
@@ -82,53 +154,23 @@ const LoginScreen = () => {
           </View>
         </View>
       </Modal>
+    );
+  };
+  return (
+    <ImageBackground
+      source={require('../BackGroundImages/loginbackground.jpg')}
+      style={styles.background}
+      resizeMode="stretch">
+      {/* loading indicator */}
+      {LoadingModal()}
       <Text style={styles.welcome}>Welcome</Text>
       <View style={styles.outerContainer}>
-        <View style={styles.container}>
-          <View style={styles.searchBarClicked}>
-            <TextInput
-              placeholderTextColor={COLORS.darkerterkwaz}
-              onChangeText={setEmail}
-              value={email}
-              style={styles.input}
-              placeholder="Email..."
-            />
-          </View>
-        </View>
-        <View style={styles.container}>
-          <View style={styles.searchBarClicked}>
-            <TextInput
-              // value={passwordhidden}
-              secureTextEntry={isSecured}
-              onChangeText={setpassword}
-              value={password}
-              placeholderTextColor={COLORS.darkerterkwaz}
-              style={styles.input}
-              placeholder="Password..."
-            />
-            <TouchableOpacity
-              onPress={() => {
-                setIsSecured(!isSecured);
-              }}>
-              <Text style={{marginRight: '4%'}}>
-                {isSecured ? 'Show' : 'hide'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.forgotPassContainer}>
-          <Text style={styles.forgotPass}>Forgot Password?</Text>
-          <TouchableOpacity onPress={() => recover()}>
-            <Text style={styles.forgotPassLink}>Recover here</Text>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          style={styles.LoginButton}
-          onPress={async () => await Login()}>
-          <Text style={styles.LoginText}>Login</Text>
-        </TouchableOpacity>
+        {/* inputs */}
+        {InputTextEmail()}
+        {InputTextPassword()}
+        {/* nav buttons */}
+        {RecoverButton()}
+        {LoginButton()}
       </View>
 
       <View style={styles.registerContainer}>

@@ -11,41 +11,41 @@ import {
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import {TextInput} from 'react-native-gesture-handler';
 import React, {useState} from 'react';
-import { urls } from '../../api/urls';
-import { ScreenNames } from '../Data/ScreenNames';
-import { useNavigation } from '@react-navigation/native';
+import {ScreenNames} from '../Data/ScreenNames';
+import {useNavigation} from '@react-navigation/native';
+import Regs from '../Regs';
+import {RegisterAccount} from '../../api/api';
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setpassword] = useState('');
   const [isSecured, setIsSecured] = useState(true);
-  const [indicatorOn,setindicatorOn] = useState(false)
+  const [indicatorOn, setindicatorOn] = useState(false);
   const navigation = useNavigation();
 
+  const inputValidationError = () => {
+    let email_pass_isEmpty =
+      email.trim().length == 0 || password.trim().length == 0;
+    if (email_pass_isEmpty) {
+      return 'some fields are empty';
+    } else if (Regs.email.test(email) === false) {
+      return 'enter a proper email';
+    }
+
+    return false;
+  };
+
   const Register = async () => {
-    let emailreg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-    console.log('Register pressed');
-    if (email.trim().length == 0 || password.trim().length == 0) {
-      Alert.alert('some fields are empty');
-      return;
-    }else if(emailreg.test(email.trim()) === false){
-      Alert.alert("enter a proper email")
+    let valedationError = inputValidationError();
+    if (valedationError) {
+      Alert.alert(valedationError);
       return;
     }
-    setindicatorOn(true)
-    await fetch(urls.Register,{
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: email.toLowerCase(),
-            password: password,
-          }),
-    })
-      .then(res => res.json())
+
+    setindicatorOn(true);
+    RegisterAccount(email, password)
       .then(resJson => {
-        setindicatorOn(false)
+        setindicatorOn(false);
         if (!resJson.user) {
           Alert.alert(resJson?.message);
         } else {
@@ -57,12 +57,9 @@ const RegisterScreen = () => {
       });
   };
 
-  return (
-    <ImageBackground
-      resizeMode="cover"
-      style={styles.background}
-      source={require('../BackGroundImages/RegisterBG.jpg')}>
-        <Modal animationType="fade" transparent={true} visible={indicatorOn}>
+  const LoadingIndicator = () => {
+    return (
+      <Modal animationType="fade" transparent={true} visible={indicatorOn}>
         <View style={styles.loadingContainer}>
           <View style={styles.Dialog}>
             <Text style={styles.loading}>Logging in...</Text>
@@ -70,44 +67,75 @@ const RegisterScreen = () => {
           </View>
         </View>
       </Modal>
+    );
+  };
+
+  const InputTextEmail = () => {
+    return (
+      <View style={styles.container}>
+        <View style={styles.searchBarClicked}>
+          <TextInput
+            placeholderTextColor={COLORS.darkerterkwaz}
+            onChangeText={setEmail}
+            value={email}
+            style={styles.input}
+            placeholder="Email..."
+          />
+        </View>
+      </View>
+    );
+  };
+
+  const InputTextPassword = () => {
+    return (
+      <View style={styles.container}>
+        <View style={styles.searchBarClicked}>
+          <TextInput
+            // value={passwordhidden}
+            secureTextEntry={isSecured}
+            onChangeText={setpassword}
+            value={password}
+            placeholderTextColor={COLORS.darkerterkwaz}
+            style={styles.input}
+            placeholder="Password..."
+          />
+          <TouchableOpacity
+            onPress={() => {
+              setIsSecured(!isSecured);
+            }}>
+            <Text style={{marginRight: '4%'}}>
+              {isSecured ? 'Show' : 'hide'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
+  const RegisterButton = () => {
+    return (
+      <TouchableOpacity
+        style={styles.LoginButton}
+        onPress={async () => await Register()}>
+        <Text style={styles.LoginText}>Register</Text>
+      </TouchableOpacity>
+    );
+  };
+  return (
+    <ImageBackground
+      resizeMode="cover"
+      style={styles.background}
+      source={require('../BackGroundImages/RegisterBG.jpg')}>
+      {/* loading indicator */}
+      {LoadingIndicator()}
       <Text style={styles.welcome}>Welcome to Mozik</Text>
       <View style={styles.outerContainer}>
-        <View style={styles.container}>
-          <View style={styles.searchBarClicked}>
-            <TextInput
-              placeholderTextColor={COLORS.darkerterkwaz}
-              onChangeText={setEmail}
-              value={email}
-              style={styles.input}
-              placeholder="Email..."
-            />
-          </View>
-        </View>
-        <View style={styles.container}>
-          <View style={styles.searchBarClicked}>
-            <TextInput
-              secureTextEntry={isSecured}
-              onChangeText={setpassword}
-              value={password}
-              placeholderTextColor={COLORS.darkerterkwaz}
-              style={styles.input}
-              placeholder="Password..."
-            />
-            <TouchableOpacity
-              onPress={() => {
-                setIsSecured(!isSecured);
-              }}>
-              <Text style={{marginRight: '4%'}}>
-                {isSecured ? 'Show' : 'hide'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <TouchableOpacity
-          style={styles.LoginButton}
-          onPress={async () => await Register()}>
-          <Text style={styles.LoginText}>Register</Text>
-        </TouchableOpacity>
+        {/* email input */}
+        {InputTextEmail()}
+        {/* password input */}
+        {InputTextPassword()}
+        {/* Register Button */}
+        {RegisterButton}
       </View>
     </ImageBackground>
   );

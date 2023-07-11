@@ -21,23 +21,23 @@ import {Songs as SongsArray} from '../Data/Songs';
 import {ScreenNames} from '../Data/ScreenNames';
 
 export const Homescreen = ({navigation}) => {
-  const [catagories, setCategories] = useState(Catagories);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [songs, setSongs] = useState(SongsArray);
   const [isTrackerReady, setIsTrackerReady] = useState(false);
   const [text, setText] = useState('');
-  
+
   const MainIcons = () => {
     return (
+      // bell icon
       <View style={styles.Container}>
         <TouchableOpacity>
           <Octicons name={'bell'} size={35} color={COLORS.terkwaz} />
         </TouchableOpacity>
+        {/* history icon */}
         <TouchableOpacity
-        onPress={()=>navigation.navigate(ScreenNames.History)}
-        >
+          onPress={() => navigation.navigate(ScreenNames.History)}>
           <MaterialIcons name={'history'} size={40} color={COLORS.terkwaz} />
         </TouchableOpacity>
+        {/* settings icon */}
         <TouchableOpacity>
           <MaterialIcons name={'settings'} size={40} color={COLORS.terkwaz} />
         </TouchableOpacity>
@@ -79,7 +79,6 @@ export const Homescreen = ({navigation}) => {
   };
 
   useEffect(() => {
-    
     // player set up
     TrackPlayerRestarter();
     // Time related text
@@ -110,7 +109,6 @@ export const Homescreen = ({navigation}) => {
   };
 
   const params = {
-
     SongFlatList: {
       data: songs,
       renderItem: renderItem2,
@@ -119,7 +117,6 @@ export const Homescreen = ({navigation}) => {
       contentContainerStyle: {
         paddingHorizontal: SIZES.padding * 2,
         paddingBottom: 30,
-        // marginTop:10,
       },
       style: {...styles.SongFlatList},
     },
@@ -132,10 +129,7 @@ export const Homescreen = ({navigation}) => {
         {WelcomingText()}
         {MainIcons()}
       </View>
-      <FlatList  {...params.SongFlatList} />
-      {/* <MiniPlayComp /> */}
-      {/* play buttons comp */}
-      {/* <PlayButtonsComp /> */}
+      <FlatList {...params.SongFlatList} />
     </ImageBackground>
   );
 };
@@ -191,8 +185,8 @@ const styles = StyleSheet.create({
   },
   SongFlatList: {
     // backgroundColor:'yellow',
-    marginTop:'5%',
-    marginHorizontal:'5%'
+    marginTop: '5%',
+    marginHorizontal: '5%',
   },
   playButtonsHolder: {
     flexDirection: 'row',

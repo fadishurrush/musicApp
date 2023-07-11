@@ -30,8 +30,8 @@ const TrackScreen = ({route, navigation}) => {
     let songs = songsArray.filter(
       a => a.Category.includes(category) && a.title != item.title,
     );
-    songs.unshift(item)
-    
+    songs.unshift(item);
+
     setSongs(songs);
   };
 
@@ -48,19 +48,34 @@ const TrackScreen = ({route, navigation}) => {
     },
   };
 
+  const detailes = () => {
+    return (
+      <View style={{flex: 1}}>
+        <Image
+          style={styles.Img}
+          resizeMode="cover"
+          source={route.params.item?.artwork}
+        />
+        <Text style={styles.songname}>{route.params.item?.title}</Text>
+        <Text style={styles.songartist}>{route.params.item?.artist}</Text>
+      </View>
+    );
+  };
+
+  const NavBack = () => {
+    return (
+      <Pressable style={styles.back} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={35} color={COLORS.terkwaz} />
+      </Pressable>
+    );
+  };
+
   return (
     <ImageBackground
       style={{flex: 1, alignItems: 'center'}}
       source={require('../BackGroundImages/Gradient-blue_black.jpg')}>
-      <Pressable style={styles.back} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={35} color={COLORS.terkwaz} />
-      </Pressable>
-      <Image
-        style={styles.Img}
-        resizeMode="cover"
-        source={route.params.item?.artwork}></Image>
-      <Text style={styles.songname}>{route.params.item?.title}</Text>
-      <Text style={styles.songartist}>{route.params.item?.artist}</Text>
+      {NavBack()}
+      {detailes()}
       {/* <Pressable onPress={() => playBack()}>
         <Ionicons name="play-circle" size={75} color={'black'} />
       </Pressable> */}
