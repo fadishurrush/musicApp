@@ -14,6 +14,7 @@ import {FONTS, COLORS} from '../Data/Dimentions';
 import {Songs as songsArray} from '../Data/Songs';
 import UserContext from '../../store/UserContext';
 import { urls } from '../../api/urls';
+import { setUserFavoritesApi } from '../../api/api';
 
 const TrackComp = props => {
   const playbackState = usePlaybackState();
@@ -157,21 +158,8 @@ const TrackComp = props => {
     }
   };
   const Favorite = async () => {
-    console.log("current fav",userFavorites);
-    console.log("user email",currentUserEmail);
-    console.log("song ",props.item.title);
-     fetch(urls.setFav, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: props?.item.title,
-        userEmail: currentUserEmail.toLowerCase(),
-      }),
-    })
+     setUserFavoritesApi()
       .then(val => {
-        console.log('val ', val);
         if (userFavorites.includes(props?.item)) {
           var temp = userFavorites.filter(
             val => val.title !== props?.item.title,

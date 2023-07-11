@@ -20,6 +20,7 @@ import MusicModalComp from './MusicModalComp';
 import UserContext from '../../store/UserContext';
 import AnimatedLottieView from 'lottie-react-native';
 import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
+import { setUserFavoritesApi } from '../../api/api';
 
 const MiniPlayer = () => {
   const {
@@ -98,7 +99,7 @@ const MiniPlayer = () => {
     return (position / duration) * 100;
   };
   const Favorite = async () => {
-    setUserFavorites()
+    setUserFavoritesApi()
       .then(val => {
         if (userFavorites.includes(currentTrack)) {
           var temp = userFavorites.filter(

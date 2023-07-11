@@ -28,7 +28,7 @@ export const RegisterAccount = async (email ,password)=>{
     return await appFetch(url,"POST",body)
 }
 
-export const setUserFavorites = async ()=>{
+export const setUserFavoritesApi = async ()=>{
     const url = urls.SetFav
     const body = JSON.stringify({
         title: currentTrack.title,

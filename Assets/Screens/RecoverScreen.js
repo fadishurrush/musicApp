@@ -11,14 +11,12 @@ import {
 } from 'react-native';
 import {COLORS, FONTS} from '../Data/Dimentions';
 import {ScreenNames} from '../Data/ScreenNames';
-import {urls} from '../../api/urls';
 import Regs from '../Regs';
 
 const RecoverScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
 
   const checkEmail = async () => {
-    console.log('recover pressed');
     if (email.trim().length == 0) {
       Alert.alert('email field is empty');
       return;

@@ -1,7 +1,6 @@
 import { FlatList, ImageBackground, StyleSheet, Text, View } from "react-native";
 import { COLORS, FONTS, SIZES } from "../Data/Dimentions";
 import { useContext } from "react";
-import MusicContext from "../../store/MusicContext";
 import TrackComp from "../Components/TrackComp";
 import UserContext from "../../store/UserContext";
 
@@ -19,7 +18,6 @@ const LibraryScreen = ({navigation}) =>{
         }
     }
     const renderItem = ({item}) => {
-        console.log("useFAv",userFavorites);
         return <TrackComp item={item} />;
          
       };
