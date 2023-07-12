@@ -11,7 +11,7 @@ const SplashScreen = ({navigation}) => {
   const timeout=()=>{
     setTimeout(() => {
       navigation.replace(ScreenNames.Login);
-    }, 4540);
+    }, 3000);
   }
   useEffect(() => {
     SongsArray.length == 0

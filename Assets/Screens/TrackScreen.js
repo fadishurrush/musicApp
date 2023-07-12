@@ -48,20 +48,6 @@ const TrackScreen = ({route, navigation}) => {
     },
   };
 
-  const detailes = () => {
-    return (
-      <View style={{flex: 1}}>
-        <Image
-          style={styles.Img}
-          resizeMode="cover"
-          source={route.params.item?.artwork}
-        />
-        <Text style={styles.songname}>{route.params.item?.title}</Text>
-        <Text style={styles.songartist}>{route.params.item?.artist}</Text>
-      </View>
-    );
-  };
-
   const NavBack = () => {
     return (
       <Pressable style={styles.back} onPress={() => navigation.goBack()}>
@@ -75,7 +61,15 @@ const TrackScreen = ({route, navigation}) => {
       style={{flex: 1, alignItems: 'center'}}
       source={require('../BackGroundImages/Gradient-blue_black.jpg')}>
       {NavBack()}
-      {detailes()}
+      {/* {detailes()} */}
+      <Image
+          style={styles.Img}
+          resizeMode="cover"
+          source={item?.artwork}
+        />
+        <Text style={styles.songname}>{item?.title}</Text>
+        <Text style={styles.songartist}>{item?.artist}</Text>
+
       {/* <Pressable onPress={() => playBack()}>
         <Ionicons name="play-circle" size={75} color={'black'} />
       </Pressable> */}

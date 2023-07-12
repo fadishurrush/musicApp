@@ -4,6 +4,7 @@ import MusicContext from "../../store/MusicContext";
 import MusicProvider from "../../store/MusicProvider";
 import MiniPlayer from "../Components/MiniPlayerComp";
 
+
 const AfterSplashScreen =()=>{
     return(
         <MusicProvider>

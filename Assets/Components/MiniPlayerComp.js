@@ -20,7 +20,7 @@ import MusicModalComp from './MusicModalComp';
 import UserContext from '../../store/UserContext';
 import AnimatedLottieView from 'lottie-react-native';
 import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
-import { setUserFavoritesApi } from '../../api/api';
+import {setUserFavoritesApi} from '../../api/api';
 
 const MiniPlayer = () => {
   const {
@@ -35,6 +35,8 @@ const MiniPlayer = () => {
     useContext(UserContext);
   const playbackState = usePlaybackState();
   const {position, duration} = useProgress();
+  const [heartShape, setHeartShape] = useState('heart-outline');
+
   const toggleTrack = async () => {
     if (playbackState === 'playing' || playbackState === 3) {
       await pasueTrack();
@@ -50,6 +52,11 @@ const MiniPlayer = () => {
   useEffect(() => {
     setIsPlaying(playbackState);
   }, [playbackState]);
+
+  useEffect(() => {
+    isFavorite() ? setHeartShape('heart') : setHeartShape('heart-outline');
+  }, [userFavorites]);
+
   const playerModes = {
     loading: <ActivityIndicator size={30} />,
     idle: <ActivityIndicator size={30} />,
@@ -98,19 +105,30 @@ const MiniPlayer = () => {
   const getProgress = () => {
     return (position / duration) * 100;
   };
+
+  const isFavorite = () => {
+    for (let index = 0; index < userFavorites.length; index++) {
+      const element = userFavorites[index];
+      if (element.title === currentTrack.title) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const Favorite = async () => {
-    setUserFavoritesApi()
-      .then(val => {
-        if (userFavorites.includes(currentTrack)) {
-          var temp = userFavorites.filter(
-            val => val.title !== currentTrack.title,
-          );
-          setUserFavorites(temp);
-        } else {
-          setUserFavorites([...userFavorites, currentTrack]);
-        }
-      })
-      .catch(e => console.log('setfav error ', e));
+    setUserFavoritesApi(currentTrack.title,currentUserEmail).then(() => {
+      if (isFavorite()) {
+        var temp = userFavorites.filter(
+          val => val.title !== currentTrack.title,
+        );
+        setUserFavorites(temp);
+      } else {
+        setUserFavorites([...userFavorites, currentTrack]);
+      }
+    }).catch((e)=>{
+      console.log("set fav error mini player comp ",e);
+    })
   };
   const SameCategory = async category => {
     //filter songs
@@ -165,9 +183,7 @@ const MiniPlayer = () => {
       <Pressable style={styles.Pressable} onPress={() => Favorite()}>
         <IonIcon
           style={styles.icon}
-          name={
-            userFavorites.includes(currentTrack) ? 'heart' : 'heart-outline'
-          }
+          name={heartShape}
           color={COLORS.greenesh}
           size={30}
         />

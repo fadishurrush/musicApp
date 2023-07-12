@@ -1,7 +1,8 @@
 import { urls } from "./urls"
 
-const appFetch = async ( url , method , body ) => {
-    return await fetch ( url , {method:method || 'GET' , body: body}).then(res => res.json())
+const appFetch = async ( url , method , body, header ) => {
+    return header ? await fetch ( url , {method:method || 'GET',headers:{"Content-Type": "application/json"}, body: body}).then(res => res.json())
+    : await fetch ( url , {method:method || 'GET', body: body}).then(res => res.json())
 }
 
 export const LoginReq = async (email , pass ) => {
@@ -25,15 +26,16 @@ export const RegisterAccount = async (email ,password)=>{
         email: email.toLowerCase(),
         password: password,
       })  
-    return await appFetch(url,"POST",body)
+    return await appFetch(url,"POST",body,header)
 }
 
-export const setUserFavoritesApi = async ()=>{
+export const setUserFavoritesApi = async (title,email)=>{
     const url = urls.SetFav
     const body = JSON.stringify({
-        title: currentTrack.title,
-        userEmail: currentUserEmail.toLowerCase(),
+        title: title,
+        userEmail: email.toLowerCase(),
       })
+      header= true
       
-      return await appFetch(url,"PATCH",body)
+      return await appFetch(url,"PATCH",body,header)
 }

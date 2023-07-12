@@ -13,8 +13,8 @@ import MusicContext from '../../store/MusicContext';
 import {FONTS, COLORS} from '../Data/Dimentions';
 import {Songs as songsArray} from '../Data/Songs';
 import UserContext from '../../store/UserContext';
-import { urls } from '../../api/urls';
-import { setUserFavoritesApi } from '../../api/api';
+import {urls} from '../../api/urls';
+import {setUserFavoritesApi} from '../../api/api';
 
 const TrackComp = props => {
   const playbackState = usePlaybackState();
@@ -26,9 +26,11 @@ const TrackComp = props => {
     History,
     today,
   } = useContext(MusicContext);
-  const {userFavorites,setUserFavorites,currentUserEmail} = useContext(UserContext)
+  const {userFavorites, setUserFavorites, currentUserEmail} =
+    useContext(UserContext);
+  const [heartShape, setHeartShape] = useState('heart-outline');
 
-  const SameCategory = category => {
+  const AddNewSongSameCategory = category => {
     //filter songs
     let songsList = songsArray.filter(
       a => a.Category.includes(category) && a.title !== props?.item.title,
@@ -38,8 +40,21 @@ const TrackComp = props => {
   };
 
   useEffect(() => {
+    isFavorite() ? setHeartShape('heart') : setHeartShape('heart-outline')
+  });
+
+  const isFavorite=()=>{
+    for (let index = 0; index < userFavorites.length; index++) {
+      const element = userFavorites[index];
+      if (element.title === props.item.title) {
+        return true
+      }
+    }
+    return false
+  }
+  useEffect(() => {
     if (isPlaying === 'stopped') {
-      SameCategory(props?.item.Category[1]);
+      AddNewSongSameCategory(props?.item.Category[1]);
     }
   }, [isPlaying]);
 
@@ -158,20 +173,22 @@ const TrackComp = props => {
     }
   };
   const Favorite = async () => {
-     setUserFavoritesApi()
+    setUserFavoritesApi(props?.item?.title,currentUserEmail)
       .then(val => {
-        if (userFavorites.includes(props?.item)) {
+        if (isFavorite()) {
           var temp = userFavorites.filter(
             val => val.title !== props?.item.title,
           );
           setUserFavorites(temp);
         } else {
-          setUserFavorites([...userFavorites, currentTrack]);
+          setUserFavorites([...userFavorites, props.item]);
         }
       })
       .catch(e => console.log('setfav error ', e));
   };
-
+  const checktitleLength = title => {
+    return title.length > 12 ? `${title.substring(0, 12)}...` : title;
+  };
   return (
     <View style={styles.TrackHolder}>
       <Image
@@ -179,13 +196,13 @@ const TrackComp = props => {
         resizeMode="contain"
         source={props?.item.artwork}
       />
-      <Text style={styles.title}>{props?.item.title}</Text>
+      <Text style={styles.title}>{checktitleLength(props?.item?.title)}</Text>
       <View style={styles.PressableHolder}>
-        <Pressable style={styles.Pressable} onPress={()=>Favorite()}>
+        <Pressable style={styles.Pressable} onPress={() => Favorite()}>
           <IonIcon
             style={styles.icon}
-            name={userFavorites.includes(props?.item) ? "heart" : "heart-outline"}
-            color={userFavorites.includes(props?.item) ? "black" : "black"}
+            name={heartShape}
+            color={userFavorites.includes(props?.item) ? 'black' : 'black'}
             size={30}
           />
         </Pressable>
@@ -196,6 +213,7 @@ const TrackComp = props => {
         </Pressable>
       </View>
     </View>
+
   );
 };
 
