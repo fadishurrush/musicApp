@@ -1,12 +1,12 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
-  ActivityIndicator,
   Image,
   Pressable,
   StyleSheet,
   Text,
   View,
   Modal,
+  Animated,
 } from 'react-native';
 import TrackPlayer, {
   usePlaybackState,
@@ -15,12 +15,13 @@ import TrackPlayer, {
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import MusicContext from '../../store/MusicContext';
-import {COLORS, FONTS} from '../Data/Dimentions';
+import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import MusicModalComp from './MusicModalComp';
 import UserContext from '../../store/UserContext';
-import AnimatedLottieView from 'lottie-react-native';
-import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
 import {setUserFavoritesApi} from '../../api/api';
+import {Swipeable} from 'react-native-gesture-handler';
+import {playerModesMini} from '../Data/playerModes';
+import {Songs as songsArray} from '../Data/Songs';
 
 const MiniPlayer = () => {
   const {
@@ -36,19 +37,8 @@ const MiniPlayer = () => {
   const playbackState = usePlaybackState();
   const {position, duration} = useProgress();
   const [heartShape, setHeartShape] = useState('heart-outline');
+  const swipeableRef = useRef(null);
 
-  const toggleTrack = async () => {
-    if (playbackState === 'playing' || playbackState === 3) {
-      await pasueTrack();
-    } else if (
-      playbackState === 'paused' ||
-      playbackState === 2 ||
-      playbackState === 'ready' ||
-      playbackState === 'stopped'
-    ) {
-      await playTrack();
-    }
-  };
   useEffect(() => {
     setIsPlaying(playbackState);
   }, [playbackState]);
@@ -57,51 +47,6 @@ const MiniPlayer = () => {
     isFavorite() ? setHeartShape('heart') : setHeartShape('heart-outline');
   }, [userFavorites]);
 
-  const playerModes = {
-    loading: <ActivityIndicator size={30} />,
-    idle: <ActivityIndicator size={30} />,
-    connecting: <ActivityIndicator size={30} />,
-    playing: (
-      <AnimatedLottieView
-        source={require('../lottie/sound-voice-waves.json')}
-        autoPlay
-      />
-    ),
-    paused: (
-      <IonIcon
-        style={styles.icon}
-        name={'play'}
-        color={COLORS.greenesh}
-        size={30}
-      />
-    ),
-    stopped: (
-      <IonIcon
-        style={styles.icon}
-        name={'play'}
-        color={COLORS.greenesh}
-        size={30}
-      />
-    ),
-    ready: (
-      <IonIcon
-        style={styles.icon}
-        name={'play'}
-        color={COLORS.greenesh}
-        size={30}
-      />
-    ),
-  };
-
-  const pasueTrack = async () => {
-    await TrackPlayer.pause();
-    setIsPlaying('paused');
-  };
-
-  const playTrack = async () => {
-    await TrackPlayer.play();
-    setIsPlaying('playing');
-  };
   const getProgress = () => {
     return (position / duration) * 100;
   };
@@ -117,45 +62,20 @@ const MiniPlayer = () => {
   };
 
   const Favorite = async () => {
-    setUserFavoritesApi(currentTrack.title,currentUserEmail).then(() => {
-      if (isFavorite()) {
-        var temp = userFavorites.filter(
-          val => val.title !== currentTrack.title,
-        );
-        setUserFavorites(temp);
-      } else {
-        setUserFavorites([...userFavorites, currentTrack]);
-      }
-    }).catch((e)=>{
-      console.log("set fav error mini player comp ",e);
-    })
-  };
-  const SameCategory = async category => {
-    //filter songs
-
-    let songsList = songsArray.filter(
-      a => a.Category.includes(category) && a.title !== currentTrack.title,
-    );
-    TrackPlayer.add(songsList);
-  };
-  const playNext = async () => {
-    const current = await TrackPlayer.getCurrentTrack();
-    const queue = await TrackPlayer.getQueue();
-    if (queue.length == current + 1) {
-      SameCategory(currentTrack.Category[1]);
-    }
-    await TrackPlayer.skipToNext();
-    const newcurrent = await TrackPlayer.getCurrentTrack();
-    const track = await TrackPlayer.getTrack(newcurrent);
-    setCurrentTrack(track);
-    await TrackPlayer.play();
-  };
-  const playPrevious = async () => {
-    await TrackPlayer.skipToPrevious();
-    current = await TrackPlayer.getCurrentTrack();
-    track = await TrackPlayer.getTrack(current);
-    setCurrentTrack(track);
-    await TrackPlayer.play();
+    setUserFavoritesApi(currentTrack.title, currentUserEmail)
+      .then(() => {
+        if (isFavorite()) {
+          var temp = userFavorites.filter(
+            val => val.title !== currentTrack.title,
+          );
+          setUserFavorites(temp);
+        } else {
+          setUserFavorites([...userFavorites, currentTrack]);
+        }
+      })
+      .catch(e => {
+        console.log('set fav error mini player comp ', e);
+      });
   };
 
   const MusicModal = () => {
@@ -194,42 +114,110 @@ const MiniPlayer = () => {
   const PlayIconRender = () => {
     return (
       <Pressable style={styles.Pressable} onPress={async () => toggleTrack()}>
-        {playerModes[isPlaying]}
+        {playerModesMini[isPlaying]}
       </Pressable>
     );
+  };
+
+  const toggleTrack = async () => {
+    if (playbackState === 'playing' || playbackState === 3) {
+      await pasueTrack();
+    } else {
+      await playTrack();
+    }
+  };
+  //   functions to toggle on/off the songs
+  const pasueTrack = async () => {
+    await TrackPlayer.pause();
+    setIsPlaying('paused');
+  };
+
+  const playTrack = async () => {
+    await TrackPlayer.play();
+    setIsPlaying('playing');
+  };
+
+  const playNext = async () => {
+    const current = await TrackPlayer.getCurrentTrack();
+    const queue = await TrackPlayer.getQueue();
+    if (queue.length == current + 1) {
+      AddNewSongSameCategory(currentTrack.Category[1]);
+    }
+    await TrackPlayer.skipToNext();
+    toggleTrack();
+    const newcurrent = await TrackPlayer.getCurrentTrack();
+    const track = await TrackPlayer.getTrack(newcurrent);
+    setCurrentTrack(track);
+    await TrackPlayer.play();
+  };
+
+  const AddNewSongSameCategory = () => {
+    //filter songs
+    let songsList = songsArray.filter(
+      a =>
+        a.Category.includes(currentTrack.Category[1]) &&
+        a.title !== currentTrack.title,
+    );
+    TrackPlayer.add(songsList);
+  };
+
+  const playPrevious = async () => {
+    await TrackPlayer.skipToPrevious();
+    setCurrentTrack(currentTrack);
+    await TrackPlayer.play();
+  };
+
+  const LeftSwipeActions = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <View style={styles.swipe}>
+        <Animated.Text style={{transform: [{scale: scale}]}}>
+          Previous Song
+        </Animated.Text>
+      </View>
+    );
+  };
+
+  const RightSwipeActions = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      
+      inputRange: [-200, 0],
+      outputRange: [1, 0],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <View style={styles.swipe}>
+        <Animated.Text style={{transform: [{scale: scale}]}}>
+          Next Song
+        </Animated.Text>
+      </View>
+    );
+  };
+
+  const SwipeOpened = direction => {
+    direction === 'left'
+      ? playPrevious() && closeSwipeable()
+      : playNext() && closeSwipeable();
+  };
+
+  const closeSwipeable = () => {
+    swipeableRef.current.close();
   };
 
   const detailes = () => (
     <View style={styles.row}>
       {/* image */}
       <Image style={styles.image} source={currentTrack?.artwork} />
-      <View style={styles.vertical}>
-        {/* title */}
-        <View style={styles.text}>
-          {/* artist name */}
-          <Text style={styles.songname}>{currentTrack?.title}</Text>
-          <Octicons name={'dot-fill'} size={10} color={'white'} />
-          <Text style={styles.songartist}>{currentTrack?.artist}</Text>
-        </View>
-        {/* bluetooth icon */}
-        <View style={styles.text}>
-          <IonIcon
-            style={styles.bluetooth}
-            name={'bluetooth-sharp'}
-            size={20}
-            color={COLORS.terkwaz}
-          />
-          {/* dot icon */}
-          <Octicons
-            style={styles.dot}
-            name={'dot-fill'}
-            size={10}
-            color={COLORS.terkwaz}
-          />
-          <Text style={styles.songartist}></Text>
-        </View>
-      </View>
-      {/* heart icon */}
+      {/* swipeable */}
+      {renderSwipeable()}
+
+      {/*  icons */}
       <View style={styles.PressableHolder}>
         {HeartIconPress()}
         {PlayIconRender()}
@@ -237,11 +225,48 @@ const MiniPlayer = () => {
     </View>
   );
 
+  const renderSwipeable = () => {
+    return (
+      <Swipeable
+        ref={swipeableRef}
+        childrenContainerStyle={{flex: 1}}
+        renderLeftActions={LeftSwipeActions}
+        renderRightActions={RightSwipeActions}
+        onSwipeableOpen={direction => SwipeOpened(direction)}>
+        <View style={styles.vertical}>
+          {/* title */}
+          <View style={styles.text}>
+            {/* artist name */}
+            <Text style={styles.songname}>{currentTrack?.title}</Text>
+            <Octicons name={'dot-fill'} size={10} color={'white'} />
+            <Text style={styles.songartist}>{currentTrack?.artist}</Text>
+          </View>
+          {/* bluetooth icon */}
+          <View style={styles.text}>
+            <IonIcon
+              style={styles.bluetooth}
+              name={'bluetooth-sharp'}
+              size={20}
+              color={COLORS.terkwaz}
+            />
+            {/* dot icon */}
+            <Octicons
+              style={styles.dot}
+              name={'dot-fill'}
+              size={10}
+              color={COLORS.terkwaz}
+            />
+            <Text style={styles.songartist}></Text>
+          </View>
+        </View>
+      </Swipeable>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* music pop up page */}
       {MusicModal()}
-
       <Pressable
         style={{flex: 1}}
         onPress={() => setModalVisible(!modalVisible)}>
@@ -268,7 +293,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     flex: 1,
-    // backgroundColor:'yellow'
+    // backgroundColor:'black'
   },
   image: {
     width: '15%',
@@ -296,18 +321,19 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   PressableHolder: {
-    alignItems: 'center',
-    marginLeft: 15,
     flexDirection: 'row',
-    // backgroundColor:"red",
+    // backgroundColor: 'red',
+    position: 'absolute',
+    width: "25%",
+    height: '100%',
+    left: SIZES.width - 105,
     justifyContent: 'flex-end',
-    marginRight: '3%',
   },
   Pressable: {
-    marginLeft: 10,
-    // backgroundColor:'red',
+    // marginLeft: 10,
+    // backgroundColor:'yellow',
     height: '100%',
-    width: '20%',
+    width: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -318,7 +344,8 @@ const styles = StyleSheet.create({
   vertical: {
     flexDirection: 'column',
     flex: 1,
-    // backgroundColor:"yellow"
+    width: SIZES.width-(0.4*SIZES.width),
+    // backgroundColor: 'yellow',
   },
   bluetooth: {
     marginBottom: 5,
@@ -326,6 +353,15 @@ const styles = StyleSheet.create({
   dot: {
     margin: 2,
     marginBottom: 8,
+  },
+  swipe: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    // width: 100,
+    height: '100%',
+    // backgroundColor: 'red',
+    // position:'absolute',
+    // right:0,
   },
 });
 

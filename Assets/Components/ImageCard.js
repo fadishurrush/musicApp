@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, View, Image, Text, StyleSheet} from 'react-native';
+import { View, Image, Text, StyleSheet} from 'react-native';
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import AnimatedLottieView from 'lottie-react-native';
 

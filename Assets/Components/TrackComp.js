@@ -7,84 +7,119 @@ import {
   Text,
   View,
 } from 'react-native';
-import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MusicContext from '../../store/MusicContext';
 import {FONTS, COLORS} from '../Data/Dimentions';
-import {Songs as songsArray} from '../Data/Songs';
 import UserContext from '../../store/UserContext';
-import {urls} from '../../api/urls';
 import {setUserFavoritesApi} from '../../api/api';
-
+import {playerModesTrack} from '../Data/playerModes';
+import TrackPlayer, {usePlaybackState} from 'react-native-track-player';
+import { Songs as songsArray } from '../Data/Songs';
 const TrackComp = props => {
-  const playbackState = usePlaybackState();
   const {
     isPlaying,
-    setIsPlaying,
     currentTrack,
     setCurrentTrack,
+    setIsPlaying,
     History,
     today,
   } = useContext(MusicContext);
   const {userFavorites, setUserFavorites, currentUserEmail} =
     useContext(UserContext);
   const [heartShape, setHeartShape] = useState('heart-outline');
+  const playbackState = usePlaybackState();
 
-  const AddNewSongSameCategory = category => {
+  useEffect(() => {
+    isFavorite() ? setHeartShape('heart') : setHeartShape('heart-outline');
+  });
+
+  const isFavorite = () => {
+    for (let index = 0; index < userFavorites.length; index++) {
+      const element = userFavorites[index];
+      if (element.title === props.item.title) {
+        return true;
+      }
+    }
+    return false;
+  };
+  useEffect(() => {
+    if (isPlaying === 'stopped') {
+      AddNewSongSameCategory();
+    }
+  }, [isPlaying]);
+
+  const AddNewSongSameCategory = () => {
     //filter songs
     let songsList = songsArray.filter(
-      a => a.Category.includes(category) && a.title !== props?.item.title,
+      a => a.Category.includes(props?.item.Category[1]) && a.title !== props?.item.title,
     );
     TrackPlayer.add(songsList);
     playBack();
   };
 
-  useEffect(() => {
-    isFavorite() ? setHeartShape('heart') : setHeartShape('heart-outline')
-  });
-
-  const isFavorite=()=>{
-    for (let index = 0; index < userFavorites.length; index++) {
-      const element = userFavorites[index];
-      if (element.title === props.item.title) {
-        return true
-      }
-    }
-    return false
-  }
-  useEffect(() => {
-    if (isPlaying === 'stopped') {
-      AddNewSongSameCategory(props?.item.Category[1]);
-    }
-  }, [isPlaying]);
-
-  const playerModes = {
-    loading: <ActivityIndicator size={30} />,
-    idle: <ActivityIndicator size={30} />,
-    connecting: <ActivityIndicator size={30} />,
-    playing: (
-      <IonIcon style={styles.icon} name={'pause'} color={'black'} size={30} />
-    ),
-    paused: (
-      <IonIcon style={styles.icon} name={'play'} color={'black'} size={30} />
-    ),
-    ready: (
-      <IonIcon style={styles.icon} name={'play'} color={'black'} size={30} />
-    ),
-    stopped: (
-      <IonIcon style={styles.icon} name={'play'} color={'black'} size={30} />
-    ),
-  };
-
   const renderPlayButton = () => {
     if (currentTrack?.title == props?.item.title) {
-      return playerModes[isPlaying];
+      return playerModesTrack[isPlaying];
     } else {
       return (
         <IonIcon style={styles.icon} name={'play'} color={'black'} size={30} />
       );
     }
   };
+
+  const playBack = async () => {
+    const current = await TrackPlayer.getCurrentTrack();
+    const track = await TrackPlayer.getTrack(current);
+
+    if (track) {
+      if (track.title != props?.item.title) {
+        await setNewSongToTrack();
+      } else {
+        await toggleTrack();
+      }
+    } else {
+      await addNewItemToTrack();
+    }
+  };
+
+  //   add new song
+  const addNewItemToTrack = async () => {
+    await TrackPlayer.add(props?.item);
+    // historyCheck();
+    setCurrentTrack(props?.item);
+    await TrackPlayer.play();
+    setIsPlaying('playing');
+  };
+
+  //   set new song
+  const setNewSongToTrack = async () => {
+    await TrackPlayer.reset();
+    await TrackPlayer.add(props?.item);
+    // historyCheck();
+    setCurrentTrack(props?.item);
+    await TrackPlayer.play();
+    setIsPlaying('playing');
+  };
+
+  const toggleTrack = async () => {
+    if (playbackState === 'playing' || playbackState === 3) {
+      await pasueTrack();
+    } else {
+      await playTrack();
+    }
+  };
+
+  //   functions to toggle on/off the songs
+  const pasueTrack = async () => {
+    await TrackPlayer.pause();
+    setIsPlaying('paused');
+  };
+
+  const playTrack = async () => {
+    await TrackPlayer.play();
+    setIsPlaying('playing');
+  };
+  //   end of functions to toggle on/off the song
 
   const historyValid = () => {
     if (History) {
@@ -123,57 +158,9 @@ const TrackComp = props => {
       song?.includes(props?.item) ? null : song?.add(props?.item);
     }
   };
-  const addNewItemToTrack = async () => {
-    await TrackPlayer.add(props.item);
-    // historyCheck();
-    setCurrentTrack(props?.item);
-    await TrackPlayer.play();
-    setIsPlaying('playing');
-  };
 
-  const setNewSongToTrack = async () => {
-    await TrackPlayer.reset();
-    await TrackPlayer.add(props.item);
-    // historyCheck();
-    setCurrentTrack(props?.item);
-    await TrackPlayer.play();
-    setIsPlaying('playing');
-  };
-
-  const pasueTrack = async () => {
-    await TrackPlayer.pause();
-    setIsPlaying('paused');
-  };
-
-  const playTrack = async () => {
-    await TrackPlayer.play();
-    setIsPlaying('playing');
-  };
-
-  const toggleTrack = async () => {
-    if (playbackState === 'playing' || playbackState === 3) {
-      await pasueTrack();
-    } else {
-      await playTrack();
-    }
-  };
-
-  const playBack = async () => {
-    const current = await TrackPlayer.getCurrentTrack();
-    const track = await TrackPlayer.getTrack(current);
-
-    if (track) {
-      if (track.title != props?.item.title) {
-        await setNewSongToTrack();
-      } else {
-        await toggleTrack();
-      }
-    } else {
-      await addNewItemToTrack();
-    }
-  };
   const Favorite = async () => {
-    setUserFavoritesApi(props?.item?.title,currentUserEmail)
+    setUserFavoritesApi(props?.item?.title, currentUserEmail)
       .then(val => {
         if (isFavorite()) {
           var temp = userFavorites.filter(
@@ -208,12 +195,11 @@ const TrackComp = props => {
         </Pressable>
         <Pressable
           style={styles.Pressable}
-          onPress={async () => await playBack()}>
+          onPress={async () => await playBack(props?.item)}>
           {renderPlayButton()}
         </Pressable>
       </View>
     </View>
-
   );
 };
 
@@ -249,9 +235,6 @@ const styles = StyleSheet.create({
   },
   Pressable: {
     marginLeft: 10,
-  },
-  icon: {
-    // backgroundColor: 'red',
   },
 });
 

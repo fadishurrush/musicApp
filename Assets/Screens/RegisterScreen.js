@@ -7,9 +7,9 @@ import {
   Alert,
   ActivityIndicator,
   Modal,
+  TextInput
 } from 'react-native';
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
-import {TextInput} from 'react-native-gesture-handler';
 import React, {useState} from 'react';
 import {ScreenNames} from '../Data/ScreenNames';
 import {useNavigation} from '@react-navigation/native';

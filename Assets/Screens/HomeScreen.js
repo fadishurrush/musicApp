@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   ImageBackground,
@@ -7,23 +7,26 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Catagories} from '../Data/Catagories';
 import {SIZES, FONTS, COLORS} from '../Data/Dimentions';
 import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TrackPlayer, {
-  AppKilledPlaybackBehavior,
   Capability,
-  State,
+  usePlaybackState,
 } from 'react-native-track-player';
 import ImageCard from '../Components/ImageCard';
 import {Songs as SongsArray} from '../Data/Songs';
 import {ScreenNames} from '../Data/ScreenNames';
+import {setcontext} from '../Data/playBack';
+import MusicContext from '../../store/MusicContext';
 
 export const Homescreen = ({navigation}) => {
   const [songs, setSongs] = useState(SongsArray);
   const [isTrackerReady, setIsTrackerReady] = useState(false);
   const [text, setText] = useState('');
+  const {setIsPlaying, setCurrentTrack, currentTrack} =
+    useContext(MusicContext);
+  const playbackState = usePlaybackState();
 
   const MainIcons = () => {
     return (
@@ -81,6 +84,7 @@ export const Homescreen = ({navigation}) => {
   useEffect(() => {
     // player set up
     TrackPlayerRestarter();
+    
     // Time related text
 
     let today = new Date();

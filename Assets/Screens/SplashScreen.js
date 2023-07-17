@@ -41,7 +41,7 @@ const SplashScreen = ({navigation}) => {
         style={{backgroundColor: 'black'}}
         source={require('../lottie/1st_Logo_MusicApp.mp4.lottie.json')}
         autoPlay
-        loop={false}
+        loop={true}
       />
     </View>
   );

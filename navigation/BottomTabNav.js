@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {HomeStackNav} from './HomeStackNav';
@@ -10,6 +10,8 @@ import SearchScreen from '../Assets/Screens/SearchScreen';
 import LibraryScreen from '../Assets/Screens/LibraryScreen';
 
 const tab = createBottomTabNavigator();
+
+
 
 const BottomTabNav = () => {
   return (

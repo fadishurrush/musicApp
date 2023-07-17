@@ -6,32 +6,27 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  View,
 } from 'react-native';
 import TrackComp from '../Components/TrackComp';
-import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
+import {COLORS, FONTS} from '../Data/Dimentions';
 import {Songs as songsArray} from '../Data/Songs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import TrackPlayer, {State} from 'react-native-track-player';
-import {ScreenNames} from '../Data/ScreenNames';
-import {iconName} from '../../App';
 
 const TrackScreen = ({route, navigation}) => {
   const [songs, setSongs] = useState(songsArray);
   const {item} = route?.params || {};
 
-  // const [sameTrack, setSameTrack] = useState(false);
-
   useEffect(() => {
-    SameCategory(item?.Category[0]);
+    TrackPosition();
   }, []);
-  const SameCategory = category => {
+
+  const TrackPosition = () => {
     //filter songs
     let songs = songsArray.filter(
-      a => a.Category.includes(category) && a.title != item.title,
+      a => a.Category.includes(item?.Category[0]) && a.title != item.title,
     );
     songs.unshift(item);
-
+  
     setSongs(songs);
   };
 
@@ -62,17 +57,9 @@ const TrackScreen = ({route, navigation}) => {
       source={require('../BackGroundImages/Gradient-blue_black.jpg')}>
       {NavBack()}
       {/* {detailes()} */}
-      <Image
-          style={styles.Img}
-          resizeMode="cover"
-          source={item?.artwork}
-        />
-        <Text style={styles.songname}>{item?.title}</Text>
-        <Text style={styles.songartist}>{item?.artist}</Text>
-
-      {/* <Pressable onPress={() => playBack()}>
-        <Ionicons name="play-circle" size={75} color={'black'} />
-      </Pressable> */}
+      <Image style={styles.Img} resizeMode="cover" source={item?.artwork} />
+      <Text style={styles.songname}>{item?.title}</Text>
+      <Text style={styles.songartist}>{item?.artist}</Text>
       <FlatList {...params.FlatList} />
     </ImageBackground>
   );
