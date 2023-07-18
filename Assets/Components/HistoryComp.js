@@ -7,7 +7,7 @@ import { COLORS, FONTS } from '../Data/Dimentions';
 const HistoryComp = props => {
   return (
     <View style={styles.TrackHolder}>
-      <Image style={styles.image} resizeMode="cover" source={props?.track.artwork} />
+      <Image style={styles.image} resizeMode="contain" source={props?.track.artwork} />
       <Text style={styles.title}>{props?.track.title}</Text>
       <View style={{alignItems:'flex-end',marginRight:'4%',flex:1}}>
       <TouchableOpacity>

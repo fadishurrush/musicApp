@@ -18,18 +18,15 @@ const HistoryScreen = () => {
     console.log("history ",history);
   },[])
 
-  const renderItem = (item) => {
-    console.log("history ,",history);
-    console.log('item ', item);
-    const {date, songs} = item;
+  const renderItem = ({item}) => {
+    const {Date, songs} = item;
 
     return (
       <View>
         <Text style={styles.TextDate}>
-          {/* {extractDate(time)} */}
-          {date}
+          {extractDate(Date)}
         </Text>
-        {/* {renderComp(songs)} */}
+        {renderComp(songs)}
       </View>
     );
   };
@@ -56,7 +53,7 @@ const HistoryScreen = () => {
       'Dec',
     ];
     var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    var date = val;
+    var date = new Date(val);
     var y = date.getFullYear();
     var d = date.getDay();
     var m = date.getMonth();

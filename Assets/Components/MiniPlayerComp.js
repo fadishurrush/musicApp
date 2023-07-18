@@ -53,14 +53,11 @@ const MiniPlayer = () => {
   }, [userFavorites]);
 
   useEffect(() => {
-    console.log('calling check History');
-    console.log('current track', currentTrack);
     checkHistory();
   }, [currentTrack]);
 
   const checkHistory = async () => {
     var newHistory;
-    console.log('history ', history);
     if (!history?.length) {
       let obj = historyObject();
       setHistory([obj]);
@@ -82,7 +79,7 @@ const MiniPlayer = () => {
 
   // adds a song to histroy array in the same day
   const addSongToHistory = () => {
-    songArr = history[0].songs;
+    songArr = history[0]?.songs;
     let newSongArr = [currentTrack];
     songArr = newSongArr.concat(songArr);
     let date = history[0].Date;
@@ -141,7 +138,8 @@ const MiniPlayer = () => {
   };
   // sorts the song to make it on the start of the array
   const sortHistory = () => {
-    let hisArray = history[0];
+    let hisArray = history[0]?.songs;
+    hisArray = hisArray.filter((val)=> val.title !== currentTrack.title)
     let newArr = [currentTrack];
     let sortedHistory = newArr.concat(hisArray);
     let date = history[0].Date;
@@ -156,7 +154,7 @@ const MiniPlayer = () => {
   // checks if song is in the history array
   const songExists = () => {
     const songsArray = history[0].songs;
-    if (songsArray.includes(currentTrack)) {
+    if (songsArray.some(e => e.title === currentTrack.title)) {
       return true;
     } else {
       return false;
