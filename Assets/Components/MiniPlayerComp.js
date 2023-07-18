@@ -66,9 +66,10 @@ const MiniPlayer = () => {
     if (history.length == 0) {
       setHistory([historyObject()]);
     } else if (checkDate(date)) {
-      setHistory([...history, historyObject()]);
+      setHistory([historyObject(),...history]);
     } else {
       if (!songExists) {
+        addSongToHistory()
       } else {
         sortHistory();
       }
@@ -78,11 +79,18 @@ const MiniPlayer = () => {
     });
   };
 
+  // adds a song to histroy array in the same day
+  const addSongToHistory=()=>{
+    const {songs} = history[0]
+    songs.push(currentTrack)
+    songs.unshift(currentTrack)
+  }
+
   const historyObject = () => {
     const date = new Date();
     const newHistory = {
       Date: date,
-      song: currentTrack,
+      songs: [currentTrack],
     };
 
     return newHistory;
@@ -125,7 +133,7 @@ const MiniPlayer = () => {
   // sorts the song to make it on the start of the array
   const sortHistory = () => {
     let sortedHistory = history;
-    sortedHistory.unshift(currentTrack);
+    sortedHistory[0].songs.unshift(currentTrack);
     setHistory(sortedHistory);
   };
   // checks if song is in the history array
