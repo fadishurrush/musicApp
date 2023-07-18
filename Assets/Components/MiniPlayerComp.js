@@ -18,7 +18,11 @@ import MusicContext from '../../store/MusicContext';
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import MusicModalComp from './MusicModalComp';
 import UserContext from '../../store/UserContext';
-import {setUserFavoritesApi} from '../../api/api';
+import {
+  addHistoryFromApi,
+  getHistoryFromApi,
+  setUserFavoritesApi,
+} from '../../api/api';
 import {Swipeable} from 'react-native-gesture-handler';
 import {playerModesMini} from '../Data/playerModes';
 import {Songs as songsArray} from '../Data/Songs';
@@ -32,8 +36,13 @@ const MiniPlayer = () => {
     setModalVisible,
     setCurrentTrack,
   } = useContext(MusicContext);
-  const {userFavorites, setUserFavorites, currentUserEmail} =
-    useContext(UserContext);
+  const {
+    userFavorites,
+    setUserFavorites,
+    currentUserEmail,
+    history,
+    setHistory,
+  } = useContext(UserContext);
   const playbackState = usePlaybackState();
   const {position, duration} = useProgress();
   const [heartShape, setHeartShape] = useState('heart-outline');
@@ -46,6 +55,88 @@ const MiniPlayer = () => {
   useEffect(() => {
     isFavorite() ? setHeartShape('heart') : setHeartShape('heart-outline');
   }, [userFavorites]);
+
+  useEffect(() => {
+    checkHistory();
+  }, [currentTrack]);
+
+  const checkHistory = async () => {
+    const date = Date()
+
+    if (history.length == 0) {
+      setHistory([historyObject()]);
+    } else if (checkDate(date)) {
+      setHistory([...history, historyObject()]);
+    } else {
+      if (!songExists) {
+      } else {
+        sortHistory();
+      }
+    }
+    await addHistoryFromApi(currentUserEmail, date, currentTrack).catch(e => {
+      console.log('add history error ->', e);
+    });
+  };
+
+  const historyObject = () => {
+    const date = new Date();
+    const newHistory = {
+      Date: date,
+      song: currentTrack,
+    };
+
+    return newHistory;
+  };
+
+  const checkDate = () => {
+    const latestDate = history[0].Date;
+    const date = new Date();
+    // years
+    let latestYear = latestDate.getUTCFullYear();
+    let currentYear = date.getUTCFullYear();
+    // months
+    let latestMonth = latestDate.getMonth();
+    let currentMonth = date.getMonth();
+    // days
+    let latestDay = latestDate.getDay();
+    let currentDay = date.getDay();
+
+    if (checkYear(latestYear, currentYear)) {
+      return true;
+    } else if (checkMonth(latestMonth, currentMonth)) {
+      return true;
+    } else if (checkDay(latestDay, currentDay)) {
+      return true;
+    }
+    return false;
+  };
+  // returns true if currentYear is bigger than latestYear else returns false
+  const checkYear = (latestYear, currentYear) => {
+    return latestYear < currentYear ? true : false;
+  };
+  // returns true of currentMonth is bigger than latestMonth else returns false
+  const checkMonth = (latestMonth, currentMonth) => {
+    return currentMonth > latestMonth ? true : false;
+  };
+  //  returns true if current day is bigger than latest month else returns false
+  const checkDay = (latestDay, currentDay) => {
+    return currentDay > latestDay ? true : false;
+  };
+  // sorts the song to make it on the start of the array
+  const sortHistory = () => {
+    let sortedHistory = history;
+    sortedHistory.unshift(currentTrack);
+    setHistory(sortedHistory);
+  };
+  // checks if song is in the history array
+  const songExists = () => {
+    const songsArray = history[0].songsArray;
+    if (songsArray.includes(currentTrack)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   const getProgress = () => {
     return (position / duration) * 100;
@@ -185,7 +276,6 @@ const MiniPlayer = () => {
 
   const RightSwipeActions = (progress, dragX) => {
     const scale = dragX.interpolate({
-      
       inputRange: [-200, 0],
       outputRange: [1, 0],
       extrapolate: 'clamp',
@@ -324,7 +414,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // backgroundColor: 'red',
     position: 'absolute',
-    width: "25%",
+    width: '25%',
     height: '100%',
     left: SIZES.width - 105,
     justifyContent: 'flex-end',
@@ -344,7 +434,7 @@ const styles = StyleSheet.create({
   vertical: {
     flexDirection: 'column',
     flex: 1,
-    width: SIZES.width-(0.4*SIZES.width),
+    width: SIZES.width - 0.4 * SIZES.width,
     // backgroundColor: 'yellow',
   },
   bluetooth: {

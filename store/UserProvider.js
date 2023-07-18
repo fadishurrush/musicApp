@@ -6,6 +6,7 @@ import {urls} from '../api/urls';
 const UserProvider = props => {
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
   const [userFavorites, setUserFavorites] = useState([]);
+  const [history,setHistory]= useState([]);
 
 
 
@@ -16,6 +17,8 @@ const UserProvider = props => {
         setCurrentUserEmail,
         userFavorites,
         setUserFavorites,
+        history,
+        setHistory
       }}>
       {props.children}
     </UserContext.Provider>

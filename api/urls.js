@@ -9,4 +9,6 @@ export const urls = {
   GetFav: email => `${baseurl}/getFav?email=${email.toLowerCase()}`,
   SetFav: baseurl + '/setFav',
   AccountRecover: baseurl + '/AccountRecover',
+  getHistory:(email)=> `${baseurl}/getHistory${email}`,
+  addHistory: baseurl+'/addHistory',
 };
