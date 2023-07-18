@@ -1,7 +1,6 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useState} from 'react';
 import UserContext from './UserContext';
-import {urls} from '../api/urls';
 
 const UserProvider = props => {
   const [currentUserEmail, setCurrentUserEmail] = useState(null);

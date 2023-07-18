@@ -18,11 +18,7 @@ import MusicContext from '../../store/MusicContext';
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import MusicModalComp from './MusicModalComp';
 import UserContext from '../../store/UserContext';
-import {
-  addHistoryFromApi,
-  getHistoryFromApi,
-  setUserFavoritesApi,
-} from '../../api/api';
+import {addHistoryFromApi, setUserFavoritesApi} from '../../api/api';
 import {Swipeable} from 'react-native-gesture-handler';
 import {playerModesMini} from '../Data/playerModes';
 import {Songs as songsArray} from '../Data/Songs';
@@ -57,47 +53,60 @@ const MiniPlayer = () => {
   }, [userFavorites]);
 
   useEffect(() => {
+    console.log('calling check History');
+    console.log('current track', currentTrack);
     checkHistory();
   }, [currentTrack]);
 
   const checkHistory = async () => {
-    const date = Date()
-
-    if (history.length == 0) {
-      setHistory([historyObject()]);
-    } else if (checkDate(date)) {
-      setHistory([historyObject(),...history]);
+    var newHistory;
+    console.log('history ', history);
+    if (!history?.length) {
+      let obj = historyObject();
+      setHistory([obj]);
+      newHistory = [obj];
+    } else if (checkDate()) {
+      setHistory([historyObject(), ...history]);
+      newHistory = [historyObject(), ...history];
     } else {
-      if (!songExists) {
-        addSongToHistory()
+      if (!songExists()) {
+        newHistory = addSongToHistory();
       } else {
-        sortHistory();
+        newHistory = sortHistory();
       }
     }
-    await addHistoryFromApi(currentUserEmail, date, currentTrack).catch(e => {
+    addHistoryFromApi(currentUserEmail, newHistory).catch(e => {
       console.log('add history error ->', e);
     });
   };
 
   // adds a song to histroy array in the same day
-  const addSongToHistory=()=>{
-    const {songs} = history[0]
-    songs.push(currentTrack)
-    songs.unshift(currentTrack)
-  }
+  const addSongToHistory = () => {
+    songArr = history[0].songs;
+    let newSongArr = [currentTrack];
+    songArr = newSongArr.concat(songArr);
+    let date = history[0].Date;
+    const songObject = {
+      Date: date,
+      songs: songArr,
+    };
+    let slicedHistory = history.slice(1);
+    setHistory([songObject, ...slicedHistory]);
+    return [songObject, ...slicedHistory];
+  };
 
   const historyObject = () => {
-    const date = new Date();
+    let date = new Date();
+    let track = currentTrack;
     const newHistory = {
       Date: date,
-      songs: [currentTrack],
+      songs: [track],
     };
-
     return newHistory;
   };
 
   const checkDate = () => {
-    const latestDate = history[0].Date;
+    const latestDate = new Date(history[0]?.Date);
     const date = new Date();
     // years
     let latestYear = latestDate.getUTCFullYear();
@@ -132,13 +141,21 @@ const MiniPlayer = () => {
   };
   // sorts the song to make it on the start of the array
   const sortHistory = () => {
-    let sortedHistory = history;
-    sortedHistory[0].songs.unshift(currentTrack);
-    setHistory(sortedHistory);
+    let hisArray = history[0];
+    let newArr = [currentTrack];
+    let sortedHistory = newArr.concat(hisArray);
+    let date = history[0].Date;
+    const songObject = {
+      Date: date,
+      songs: sortedHistory,
+    };
+    let slicedHistory = history.slice(1);
+    setHistory([songObject, ...slicedHistory]);
+    return [songObject, ...slicedHistory];
   };
   // checks if song is in the history array
   const songExists = () => {
-    const songsArray = history[0].songsArray;
+    const songsArray = history[0].songs;
     if (songsArray.includes(currentTrack)) {
       return true;
     } else {

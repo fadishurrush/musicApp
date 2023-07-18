@@ -42,7 +42,7 @@ export const setUserFavoritesApi = async (title, email) => {
     title: title,
     userEmail: email.toLowerCase(),
   });
-  header = true;
+  let header = true;
 
   return await appFetch(url, 'PATCH', body, header);
 };
@@ -52,14 +52,14 @@ export const getHistoryFromApi = async email => {
   return await appFetch(url);
 };
 
-export const addHistoryFromApi = async (email,date,songsArr) => {
+export const addHistoryFromApi = async (email,newHistory) => {
     const url = urls.addHistory
     const body = JSON.stringify({
-        email:email,
-        newHistory:{
-            Date:date,
-            songsArr:songsArr
-        }
+        email:email.toLowerCase(),
+        newHistory:newHistory
     })
-    return await appFetch(url,'POST',body);
+
+    let header = true
+
+    return await appFetch(url,'POST',body,header);
   };

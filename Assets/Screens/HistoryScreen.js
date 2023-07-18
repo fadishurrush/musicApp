@@ -3,31 +3,39 @@ import {FlatList, StyleSheet, Text, View} from 'react-native';
 import MusicContext from '../../store/MusicContext';
 import HistoryComp from '../Components/HistoryComp';
 import {FONTS} from '../Data/Dimentions';
+import UserContext from '../../store/UserContext';
 
 const HistoryScreen = () => {
-  const {History} = useContext(MusicContext);
+  const {history} = useContext(UserContext);
   const renderComp = songArr => {
     for (let index = 0; index < songArr.length; index++) {
       const song = songArr[index];
       return <HistoryComp track={song} />;
     }
   };
-  const renderItem = ({item}) => {
-    const {day, songArr} = item;
+
+  useEffect(()=>{
+    console.log("history ",history);
+  },[])
+
+  const renderItem = (item) => {
+    console.log("history ,",history);
+    console.log('item ', item);
+    const {date, songs} = item;
 
     return (
       <View>
         <Text style={styles.TextDate}>
           {/* {extractDate(time)} */}
-          {day}
+          {date}
         </Text>
-        {renderComp(songArr)}
+        {/* {renderComp(songs)} */}
       </View>
     );
   };
   const params = {
     FlatList: {
-      data: History,
+      data: history,
       renderItem: renderItem,
     },
   };
@@ -58,12 +66,12 @@ const HistoryScreen = () => {
   };
   return (
     <View>
-      {History ? (
-        <Text style={{textAlign: 'center', color: 'black'}}>
-          No music recently played
-        </Text>
-      ) : (
+      {history && history.length > 0 ? (
         <FlatList {...params.FlatList} />
+      ) : (
+        <Text style={{textAlign: 'center', color: 'black'}}>
+          No music have been played on this account
+        </Text>
       )}
     </View>
   );

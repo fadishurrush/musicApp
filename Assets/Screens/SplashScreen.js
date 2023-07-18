@@ -1,8 +1,7 @@
-import {Text, View} from 'react-native';
+import { View} from 'react-native';
 import {ScreenNames} from '../Data/ScreenNames';
 import {useEffect} from 'react';
 import {Songs as SongsArray} from '../Data/Songs';
-import {urls} from '../../api/urls';
 import AnimatedLottieView from 'lottie-react-native';
 import { GetAllSongs } from '../../api/api';
 
