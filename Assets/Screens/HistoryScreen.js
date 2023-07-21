@@ -1,32 +1,22 @@
 import React, {useContext, useEffect} from 'react';
-import {FlatList, StyleSheet, Text, View} from 'react-native';
-import MusicContext from '../../store/MusicContext';
+import {FlatList, ImageBackground, StyleSheet, Text, View} from 'react-native';
 import HistoryComp from '../Components/HistoryComp';
-import {FONTS} from '../Data/Dimentions';
+import {COLORS, FONTS} from '../Data/Dimentions';
 import UserContext from '../../store/UserContext';
 
 const HistoryScreen = () => {
   const {history} = useContext(UserContext);
-  const renderComp = songArr => {
-    for (let index = 0; index < songArr.length; index++) {
-      const song = songArr[index];
-      return <HistoryComp track={song} />;
-    }
-  };
+  const renderComp = song => <HistoryComp track={song.item} index={song.index} />;
 
-  useEffect(()=>{
-    console.log("history ",history);
-  },[])
+  useEffect(() => {}, []);
 
   const renderItem = ({item}) => {
     const {Date, songs} = item;
 
     return (
       <View>
-        <Text style={styles.TextDate}>
-          {extractDate(Date)}
-        </Text>
-        {renderComp(songs)}
+        <Text style={styles.TextDate}>{extractDate(Date)}</Text>
+        <FlatList data={songs} {...params.compFlatlist} />
       </View>
     );
   };
@@ -34,6 +24,10 @@ const HistoryScreen = () => {
     FlatList: {
       data: history,
       renderItem: renderItem,
+    },
+    compFlatlist: {
+      style:{flex:1},
+      renderItem: renderComp,
     },
   };
 
@@ -58,11 +52,13 @@ const HistoryScreen = () => {
     var d = date.getDay();
     var m = date.getMonth();
     var UTC = date.getUTCDate();
+    
+    // if()
 
     return day[d] + ',' + month[m] + UTC + ',' + y;
   };
   return (
-    <View>
+    <ImageBackground style={{flex: 1}}  source={require('../BackGroundImages/Dark-background.jpg')}>
       {history && history.length > 0 ? (
         <FlatList {...params.FlatList} />
       ) : (
@@ -70,15 +66,15 @@ const HistoryScreen = () => {
           No music have been played on this account
         </Text>
       )}
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   TextDate: {
-    ...FONTS.h1,
-    color: 'black',
-    marginTop: '5%',
+    ...FONTS.h2,
+    color: COLORS.terkwaz,
+    marginTop: '15%',
     marginLeft: '2%',
   },
 });
