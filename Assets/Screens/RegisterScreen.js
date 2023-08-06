@@ -135,7 +135,7 @@ const RegisterScreen = () => {
         {/* password input */}
         {InputTextPassword()}
         {/* Register Button */}
-        {RegisterButton}
+        {RegisterButton()}
       </View>
     </ImageBackground>
   );

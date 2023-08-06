@@ -1,5 +1,20 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-import {View, Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Animated,
+  Easing,
+} from 'react-native';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import {useNavigation} from '@react-navigation/native';
@@ -7,51 +22,12 @@ import {ScreenNames} from '../Data/ScreenNames';
 import UserContext from '../../store/UserContext';
 import BottomSheet from '@gorhom/bottom-sheet';
 
-// IMPORTANT continue and maybe adjust the mechanic in which to add the song to the array with only the same day and not every new song (Y)
 const HistoryComp = props => {
   const navigation = useNavigation();
-  const {userFavorites, userPlaylists, setUserPlaylists} =
-    useContext(UserContext);
-  const bottomSheetRef = useRef<BottomSheet>(null)
-
   const {track} = props;
   const item = track;
+  const {bottomSheetRef, setSheetOpen, setTitle,setTrack} = props;
 
-  const showActionSheet = () => {
-    bottomSheetRef.current.show();
-  };
-
-  const hideActionSheet = () => {
-    bottomSheetRef.current.hide();
-  };
-
-  const isFavorite = () => {
-    for (let index = 0; index < userFavorites.length; index++) {
-      const element = userFavorites[index];
-      if (element.title === track.title) {
-        return 'heart';
-      }
-    }
-    return 'heart-outline';
-  };
-
-  const options = [
-    {
-      title: 'fav',
-      icon: isFavorite(),
-      action: () => makeFavorite(),
-    },
-    {
-      title: 'save',
-      icon: 'save-outline',
-      action: () => makeFavorite(),
-    },
-    {
-      title: 'cancel',
-      icon: 'save-outline',
-      action: () => makeFavorite(),
-    },
-  ];
 
   const detailes = () => {
     return (
@@ -62,11 +38,22 @@ const HistoryComp = props => {
     );
   };
 
+  const handleSnapPress = useCallback(index => {
+    bottomSheetRef.current?.snapToIndex(index);
+    setSheetOpen(true);
+    setTitle(track.title);
+    setTrack(track)
+  }, []);
+
   const elipises = () => {
     return (
-      <TouchableOpacity onPress={() => showActionSheet()}>
-        <IonIcon name={'ellipsis-vertical'} size={30} color={'black'} />
-      </TouchableOpacity>
+      <View style={styles.elipises}>
+        <TouchableOpacity 
+        onPress={() => handleSnapPress(0)}
+        >
+          <IonIcon name={'ellipsis-vertical'} size={30} color={'black'} />
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -78,13 +65,7 @@ const HistoryComp = props => {
       }}>
       <Image style={styles.image} resizeMode="contain" source={track.artwork} />
       {detailes()}
-      <View style={{alignItems: 'flex-end', marginRight: '4%', flex: 1}}>
-        {elipises()}
-        {/* action sheet 1 */}
-        <BottomSheet ref={bottomSheetRef}>
-
-        </BottomSheet>
-      </View>
+      {elipises()}
     </TouchableOpacity>
   );
 };
@@ -119,33 +100,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     color: COLORS.darkerterkwaz,
   },
-  popup: {
-    borderRadius: 8,
-    borderWidth: 1,
-    backgroundColor: COLORS.darkgray,
-    paddingHorizontal: 10,
-    position: 'absolute',
-    right: SIZES.width * 0.125,
-    width: '40%',
-    height: '15%',
-  },
-  options: {
+  elipises: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 7,
-    borderBottomColor: '#ccc',
+    justifyContent: 'flex-end',
+    marginRight: '4%',
     flex: 1,
-  },
-  savePopUp: {
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    position: 'absolute',
-    top: SIZES.height * 0.5,
-    right: SIZES.width * 0.5,
-    width: '40%',
-    height: '15%',
   },
 });
 

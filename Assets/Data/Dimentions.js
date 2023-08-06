@@ -20,6 +20,7 @@ export const COLORS = {
     lightGray4: "#F8F8F9",
     transparent: "transparent",
     darkgray: '#3b3b3b',
+    gray:"#5F5F5F"
     
 
 };
