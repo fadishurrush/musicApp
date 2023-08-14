@@ -46,6 +46,12 @@ const HistoryScreen = () => {
     FlatList: {
       data: history,
       renderItem: renderItem,
+      // stickyHeaderIndices:[0] , // Index of the header item in the data array
+      //   ListHeaderComponent:() => (
+      //     <View style={{ backgroundColor: 'lightgray', padding: 16 }}>
+      //       <Text>This is a sticky header</Text>
+      //     </View>
+      //   ),
     },
     compFlatlist: {
       style: {flex: 1},
@@ -156,7 +162,7 @@ const HistoryScreen = () => {
             <BottomSheetView style={{ flex: 1}}>
               {/* {optionsComp()} */}
               {options.map((op, i) => (
-                <TouchableOpacity onPress={op.action} style={[styles.options , {borderBottomWidth: i === options.length - 1 ? 0 : 1}]}>
+                <TouchableOpacity key={i} onPress={op.action} style={[styles.options , {borderBottomWidth: i === options.length - 1 ? 0 : 1}]}>
                   <Text style={{fontSize: 38}}>{op.title}</Text>
                   <IonIcon name={op.icon} size={25} color={'black'} />
                 </TouchableOpacity>

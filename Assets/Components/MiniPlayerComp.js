@@ -22,6 +22,7 @@ import {addHistoryFromApi, setUserFavoritesApi} from '../../api/api';
 import {Swipeable} from 'react-native-gesture-handler';
 import {playerModesMini} from '../Data/playerModes';
 import {Songs as songsArray} from '../Data/Songs';
+import { BleManager } from 'react-native-ble-plx';
 
 const MiniPlayer = () => {
   const {
@@ -43,6 +44,21 @@ const MiniPlayer = () => {
   const {position, duration} = useProgress();
   const [heartShape, setHeartShape] = useState('heart-outline');
   const swipeableRef = useRef(null);
+  const manager = new BleManager();
+
+  const scanAndRetrieve=()=>{
+    manager.startDeviceScan(null,null,(error,device)=>{
+      if(error){
+        console.log("error scanning" , error);
+        return
+      }
+      if(device.name){
+        console.log("device name ", device.name);
+      }
+    })
+  }
+
+  scanAndRetrieve()
 
   useEffect(() => {
     setIsPlaying(playbackState);

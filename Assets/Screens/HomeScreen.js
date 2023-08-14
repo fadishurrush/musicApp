@@ -19,6 +19,7 @@ import {Songs as SongsArray} from '../Data/Songs';
 import {ScreenNames} from '../Data/ScreenNames';
 import {setcontext} from '../Data/playBack';
 import MusicContext from '../../store/MusicContext';
+import { BluetoothPermissionExample } from '../Data/Permissions';
 
 export const Homescreen = ({navigation}) => {
   const [songs, setSongs] = useState(SongsArray);
@@ -84,6 +85,9 @@ export const Homescreen = ({navigation}) => {
   useEffect(() => {
     // player set up
     TrackPlayerRestarter();
+    
+    // Permissions
+    BluetoothPermissionExample()
     
     // Time related text
 
