@@ -44,21 +44,21 @@ const MiniPlayer = () => {
   const {position, duration} = useProgress();
   const [heartShape, setHeartShape] = useState('heart-outline');
   const swipeableRef = useRef(null);
-  const manager = new BleManager();
+  // const manager = new BleManager();
 
-  const scanAndRetrieve=()=>{
-    manager.startDeviceScan(null,null,(error,device)=>{
-      if(error){
-        console.log("error scanning" , error);
-        return
-      }
-      if(device.name){
-        console.log("device name ", device.name);
-      }
-    })
-  }
+  // const scanAndRetrieve=()=>{
+  //   manager.startDeviceScan(null,null,(error,device)=>{
+  //     if(error){
+  //       console.log("error scanning" , error);
+  //       return
+  //     }
+  //     if(device.name){
+  //       console.log("device name ", device.name);
+  //     }
+  //   })
+  // }
 
-  scanAndRetrieve()
+  // scanAndRetrieve()
 
   useEffect(() => {
     setIsPlaying(playbackState);
