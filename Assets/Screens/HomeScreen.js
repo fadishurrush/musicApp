@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   ImageBackground,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,22 +13,44 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TrackPlayer, {
   Capability,
-  usePlaybackState,
 } from 'react-native-track-player';
 import ImageCard from '../Components/ImageCard';
 import {Songs as SongsArray} from '../Data/Songs';
 import {ScreenNames} from '../Data/ScreenNames';
-import {setcontext} from '../Data/playBack';
-import MusicContext from '../../store/MusicContext';
-import { BluetoothPermissionExample } from '../Data/Permissions';
+import { PERMISSIONS, RESULTS, check, request } from 'react-native-permissions';
 
 export const Homescreen = ({navigation}) => {
   const [songs, setSongs] = useState(SongsArray);
   const [isTrackerReady, setIsTrackerReady] = useState(false);
   const [text, setText] = useState('');
-  const {setIsPlaying, setCurrentTrack, currentTrack} =
-    useContext(MusicContext);
-  const playbackState = usePlaybackState();
+
+
+  useEffect(() => {
+    // Check if Bluetooth permissions are already granted
+    check(Platform.OS === 'ios' ? PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL : PERMISSIONS.ANDROID.BLUETOOTH)
+      .then((result) => {
+        if (result === RESULTS.GRANTED) {
+          console.log('Bluetooth permissions are already granted');
+        } else {
+          // Request Bluetooth permissions
+          request(Platform.OS === 'ios' ? PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL : PERMISSIONS.ANDROID.BLUETOOTH)
+            .then((newResult) => {
+              if (newResult === RESULTS.GRANTED) {
+                console.log('Bluetooth permissions granted');
+              } else {
+                console.log('Bluetooth permissions denied');
+              }
+            })
+            .catch((error) => {
+              console.error('Error requesting Bluetooth permissions:', error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error('Error checking Bluetooth permissions:', error);
+      });
+  }, []);
+
 
   const MainIcons = () => {
     return (
@@ -87,7 +110,6 @@ export const Homescreen = ({navigation}) => {
     TrackPlayerRestarter();
     
     // Permissions
-    BluetoothPermissionExample()
     
     // Time related text
 
