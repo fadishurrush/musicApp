@@ -7,10 +7,12 @@ import {
   View,
   Modal,
   Animated,
+  AppState,
 } from 'react-native';
 import TrackPlayer, {
   usePlaybackState,
   useProgress,
+  useTrackPlayerEvents,
 } from 'react-native-track-player';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -22,7 +24,7 @@ import {addHistoryFromApi, setUserFavoritesApi} from '../../api/api';
 import {Swipeable} from 'react-native-gesture-handler';
 import {playerModesMini} from '../Data/playerModes';
 import {Songs as songsArray} from '../Data/Songs';
-import { BleManager } from 'react-native-ble-plx';
+import {BleManager} from 'react-native-ble-plx';
 
 const MiniPlayer = () => {
   const {
@@ -92,6 +94,31 @@ const MiniPlayer = () => {
       console.log('add history error ->', e);
     });
   };
+  const handleStateChange = state => {
+    console.log('state ', state);
+
+    switch (state) {
+      case 'active':
+        TrackPlayer.play();
+        break;
+      case 'inactive':
+        TrackPlayer.pause();
+        break;
+      case 'background':
+        TrackPlayer.play();
+        break;
+    }
+  };
+  // useEffect(() => {  
+    // const stateListener = AppState.addEventListener(
+    //   'change',
+    //   handleStateChange,
+    // );
+
+    // return () => {
+    //   stateListener.remove();
+    // };
+  // }, []);
 
   // adds a song to histroy array in the same day
   const addSongToHistory = () => {
@@ -155,7 +182,7 @@ const MiniPlayer = () => {
   // sorts the song to make it on the start of the array
   const sortHistory = () => {
     let hisArray = history[0]?.songs;
-    hisArray = hisArray.filter((val)=> val.title !== currentTrack.title)
+    hisArray = hisArray.filter(val => val.title !== currentTrack.title);
     let newArr = [currentTrack];
     let sortedHistory = newArr.concat(hisArray);
     let date = history[0].Date;
@@ -249,7 +276,8 @@ const MiniPlayer = () => {
     );
   };
 
-  const toggleTrack = async () => {
+  const 
+  toggleTrack = async () => {
     if (playbackState === 'playing' || playbackState === 3) {
       await pasueTrack();
     } else {
@@ -271,7 +299,7 @@ const MiniPlayer = () => {
     const current = await TrackPlayer.getCurrentTrack();
     const queue = await TrackPlayer.getQueue();
     if (queue.length == current + 1) {
-      AddNewSongSameCategory(currentTrack.Category[1]);
+      AddNewSongSameCategory();
     }
     await TrackPlayer.skipToNext();
     toggleTrack();
@@ -281,19 +309,23 @@ const MiniPlayer = () => {
     await TrackPlayer.play();
   };
 
-  const AddNewSongSameCategory = () => {
+  const AddNewSongSameCategory = async () => {
     //filter songs
     let songsList = songsArray.filter(
       a =>
         a.Category.includes(currentTrack.Category[1]) &&
         a.title !== currentTrack.title,
     );
-    TrackPlayer.add(songsList);
+
+    await TrackPlayer.add(songsList);
   };
 
   const playPrevious = async () => {
     await TrackPlayer.skipToPrevious();
-    setCurrentTrack(currentTrack);
+    toggleTrack();
+    const newcurrent = await TrackPlayer.getCurrentTrack();
+    const track = await TrackPlayer.getTrack(newcurrent);
+    setCurrentTrack(track);
     await TrackPlayer.play();
   };
 

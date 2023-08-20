@@ -21,7 +21,6 @@ import { PERMISSIONS, RESULTS, check, request } from 'react-native-permissions';
 
 export const Homescreen = ({navigation}) => {
   const [songs, setSongs] = useState(SongsArray);
-  const [isTrackerReady, setIsTrackerReady] = useState(false);
   const [text, setText] = useState('');
 
 
@@ -79,35 +78,7 @@ export const Homescreen = ({navigation}) => {
       </View>
     );
   };
-  const TrackPlayerRestarter = async () => {
-    const isServiceRunning = await TrackPlayer.isServiceRunning();
-    if (!isServiceRunning) {
-      await TrackPlayer.setupPlayer();
-      await TrackPlayer.updateOptions({
-        // AppKilledPlaybackBehavior: AppKilledPlaybackBehavior.PausePlayback,
-        capabilities: [
-          Capability.Play,
-          Capability.Pause,
-          Capability.SkipToNext,
-          Capability.SkipToPrevious,
-          Capability.Stop,
-        ],
-        notificationCapabilities: [
-          Capability.Play,
-          Capability.Pause,
-          Capability.SkipToNext,
-          Capability.SkipToPrevious,
-        ],
-      });
-      setIsTrackerReady(true);
-    } else {
-      setIsTrackerReady(true);
-    }
-  };
-
   useEffect(() => {
-    // player set up
-    TrackPlayerRestarter();
     
     // Permissions
     
@@ -131,7 +102,7 @@ export const Homescreen = ({navigation}) => {
     return (
       <TouchableOpacity
         onPress={async () =>
-          navigation.navigate(ScreenNames.Track, {item, isTrackerReady})
+          navigation.navigate(ScreenNames.Track, {item})
         }>
         <ImageCard item={item} />
       </TouchableOpacity>
