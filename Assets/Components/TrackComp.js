@@ -36,7 +36,7 @@ const TrackComp = props => {
   const isFavorite = () => {
     for (let index = 0; index < userFavorites.length; index++) {
       const element = userFavorites[index];
-      if (element.title === props.item.title) {
+      if (element.title === props.item?.title) {
         return true;
       }
     }
@@ -51,7 +51,7 @@ const TrackComp = props => {
   const AddNewSongSameCategory = () => {
     //filter songs
     let songsList = songsArray.filter(
-      a => a.Category.includes(props?.item.Category[1]) && a.title !== props?.item.title,
+      a => a.Category.includes(props?.item?.Category[1]) && a.title !== props?.item.title,
     );
     TrackPlayer.add(songsList);
     playBack();
@@ -164,11 +164,11 @@ const TrackComp = props => {
       .then(val => {
         if (isFavorite()) {
           var temp = userFavorites.filter(
-            val => val.title !== props?.item.title,
+            val => val.title !== props?.item?.title,
           );
           setUserFavorites(temp);
         } else {
-          setUserFavorites([...userFavorites, props.item]);
+          setUserFavorites([...userFavorites, props?.item]);
         }
       })
       .catch(e => console.log('setfav error ', e));
@@ -181,7 +181,7 @@ const TrackComp = props => {
       <Image
         style={styles.image}
         resizeMode="contain"
-        source={props?.item.artwork}
+        source={props?.item?.artwork}
       />
       <Text style={styles.title}>{checktitleLength(props?.item?.title)}</Text>
       <View style={styles.PressableHolder}>

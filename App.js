@@ -10,8 +10,9 @@ import TrackPlayer, {
   Capability,
   AppKilledPlaybackBehavior,
 } from 'react-native-track-player';
+import SheetProvider from './store/SheetProvider';
+import SheetContext from './store/SheetContext';
 const App = () => {
-
   const checkInitialization = async () => {
     const isInitialized = await TrackPlayer.isServiceRunning();
     if (isInitialized) {
@@ -46,12 +47,16 @@ const App = () => {
   };
   useEffect(() => {
     checkInitialization();
-   const remoteNext =  TrackPlayer.addEventListener('remote-next', () => TrackPlayer.skipToNext())
-    const remotePrevious =TrackPlayer.addEventListener('remote-previous', () => TrackPlayer.skipToPrevious());
-    return ()=>{
-      remoteNext.remove()
-      remotePrevious.remove()
-    }
+    const remoteNext = TrackPlayer.addEventListener('remote-next', () =>
+      TrackPlayer.skipToNext(),
+    );
+    const remotePrevious = TrackPlayer.addEventListener('remote-previous', () =>
+      TrackPlayer.skipToPrevious(),
+    );
+    return () => {
+      remoteNext.remove();
+      remotePrevious.remove();
+    };
   }, []);
 
   return (
@@ -59,11 +64,19 @@ const App = () => {
       <UserContext.Consumer>
         {context => {
           return (
-            <GestureHandlerRootView style={{flex: 1}}>
-              <KeyboardAvoidingView style={{flex: 1}} enabled={true}>
-                <SplashStackNav />
-              </KeyboardAvoidingView>
-            </GestureHandlerRootView>
+            <SheetProvider>
+              <SheetContext.Consumer>
+                {context => {
+                  return (
+                    <GestureHandlerRootView style={{flex: 1}}>
+                      <KeyboardAvoidingView style={{flex: 1}} enabled={true}>
+                        <SplashStackNav />
+                      </KeyboardAvoidingView>
+                    </GestureHandlerRootView>
+                  );
+                }}
+              </SheetContext.Consumer>
+            </SheetProvider>
           );
         }}
       </UserContext.Consumer>

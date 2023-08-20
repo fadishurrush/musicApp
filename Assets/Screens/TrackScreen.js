@@ -23,7 +23,7 @@ const TrackScreen = ({route, navigation}) => {
   const TrackPosition = () => {
     //filter songs
     let songs = songsArray.filter(
-      a => a.Category.includes(item?.Category[0]) && a.title != item.title,
+      a => a.Category.includes(item?.Category[0]) && a.title != item?.title,
     );
     songs.unshift(item);
   

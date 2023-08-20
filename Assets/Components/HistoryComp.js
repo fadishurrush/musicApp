@@ -19,15 +19,14 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import {useNavigation} from '@react-navigation/native';
 import {ScreenNames} from '../Data/ScreenNames';
-import UserContext from '../../store/UserContext';
-import BottomSheet from '@gorhom/bottom-sheet';
+import SheetContext from '../../store/SheetContext';
 
 const HistoryComp = props => {
   const navigation = useNavigation();
   const {track} = props;
   const item = track;
-  const {bottomSheetRef, setSheetOpen, setTitle,setTrack} = props;
-
+  const {bottomSheetRef, setSheetOpen, setTitle, setTrack} =
+    useContext(SheetContext);
 
   const detailes = () => {
     return (
@@ -42,15 +41,13 @@ const HistoryComp = props => {
     bottomSheetRef.current?.snapToIndex(index);
     setSheetOpen(true);
     setTitle(track.title);
-    setTrack(track)
+    setTrack(track);
   }, []);
 
   const elipises = () => {
     return (
       <View style={styles.elipises}>
-        <TouchableOpacity 
-        onPress={() => handleSnapPress(0)}
-        >
+        <TouchableOpacity onPress={() => handleSnapPress(0)}>
           <IonIcon name={'ellipsis-vertical'} size={30} color={'black'} />
         </TouchableOpacity>
       </View>
