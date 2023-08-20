@@ -17,6 +17,7 @@ import BottomSheet, {
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import {setUserFavoritesApi} from '../../api/api';
+import TrackPlayer from 'react-native-track-player';
 
 const HistoryScreen = () => {
   const bottomSheetRef = useRef(null);
@@ -134,6 +135,11 @@ const HistoryScreen = () => {
       });
   };
 
+  const addToQueue=async ()=>{
+    await TrackPlayer.add(track)
+
+  }
+
   const options = [
     {
       title: 'fav',
@@ -148,9 +154,10 @@ const HistoryScreen = () => {
     {
       title: 'Add to Queue',
       icon: 'add-circle-outline',
-      action: () => makeFavorite(),
+      action: () => addToQueue(),
     },
   ];
+
 
   return (
     <ImageBackground

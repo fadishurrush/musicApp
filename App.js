@@ -47,7 +47,7 @@ const App = () => {
   useEffect(() => {
     checkInitialization();
    const remoteNext =  TrackPlayer.addEventListener('remote-next', () => TrackPlayer.skipToNext())
-    const remotePrevious =TrackPlayer.addEventListener('remote-previous', () => TrackPlayer.playPreviousTrack());
+    const remotePrevious =TrackPlayer.addEventListener('remote-previous', () => TrackPlayer.skipToPrevious());
     return ()=>{
       remoteNext.remove()
       remotePrevious.remove()
