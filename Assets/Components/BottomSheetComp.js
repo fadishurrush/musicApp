@@ -1,15 +1,23 @@
 import {BottomSheetBackdrop, BottomSheetView} from '@gorhom/bottom-sheet';
-import React, { useContext, useRef } from 'react';
+import React, {useContext, useRef} from 'react';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import UserContext from '../../store/UserContext';
-import { StyleSheet, Text, View } from 'react-native';
-import { COLORS, FONTS } from '../Data/Dimentions';
+import {StyleSheet, Text, View} from 'react-native';
+import {COLORS, FONTS} from '../Data/Dimentions';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import BottomSheet from '@gorhom/bottom-sheet';
+import TrackPlayer, {State} from 'react-native-track-player';
+import {setUserFavoritesApi} from '../../api/api';
 
-const BottomSheetComp = (props) => {
-
-  const {setSheetOpen,sheetOpen,bottomSheetRef , track , title} = props
+const BottomSheetComp = props => {
+  const {
+    setSheetOpen,
+    setMessage,
+    setShowMessage,
+    bottomSheetRef,
+    track,
+    title,
+  } = props;
   const {
     userFavorites,
     userPlaylists,
@@ -18,8 +26,7 @@ const BottomSheetComp = (props) => {
     setUserFavorites,
   } = useContext(UserContext);
 
-  const snapPoints = ['20%', '50%'];
-
+  const snapPoints = ['20%', '20%', '50%', '50%', '80%'];
 
   const isFavorite = () => {
     for (let index = 0; index < userFavorites.length; index++) {
@@ -34,11 +41,17 @@ const BottomSheetComp = (props) => {
     console.log('clicked');
     setUserFavoritesApi(title, currentUserEmail)
       .then(() => {
+        bottomSheetRef?.current.close();
+        setSheetOpen(false);
         if (isFavorite() == 'heart') {
           var temp = userFavorites.filter(val => val.title !== title);
           setUserFavorites(temp);
+          setMessage('removed from favorites');
+          setShowMessage(true);
         } else {
           setUserFavorites([...userFavorites, track]);
+          setMessage('song added to favorites');
+          setShowMessage(true);
         }
       })
       .catch(e => {
@@ -47,7 +60,15 @@ const BottomSheetComp = (props) => {
   };
 
   const addToQueue = async () => {
-    await TrackPlayer.add(track);
+    const state = await TrackPlayer.getState();
+
+    await TrackPlayer.add(track).then(async () => {
+      state == State.Playing ? await TrackPlayer.play() : null;
+      bottomSheetRef?.current.close();
+      setSheetOpen(false);
+      setMessage('song added to queue');
+      setShowMessage(true);
+    });
   };
 
   const options = [
@@ -70,20 +91,20 @@ const BottomSheetComp = (props) => {
 
   const params = {
     bottomSheet: {
-        ref: bottomSheetRef,
-        snapPoints: snapPoints,
-        onClose: () => setSheetOpen(false),
-        enablePanDownToClose: true,
-        backgroundStyle: styles.bottomSheet,
-        backdropComponent: backdropProps => (
-          <BottomSheetBackdrop
-            {...backdropProps}
-            enableTouchThrough={false}
-            pressBehavior={'close'}
-          />
-        ),
-      },
-  }
+      ref: bottomSheetRef,
+      snapPoints: snapPoints,
+      onClose: () => setSheetOpen(false),
+      enablePanDownToClose: true,
+      backgroundStyle: styles.bottomSheet,
+      backdropComponent: backdropProps => (
+        <BottomSheetBackdrop
+          {...backdropProps}
+          enableTouchThrough={false}
+          pressBehavior={'close'}
+        />
+      ),
+    },
+  };
 
   return (
     <BottomSheet index={-1} {...params.bottomSheet}>

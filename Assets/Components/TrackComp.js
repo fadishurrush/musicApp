@@ -1,6 +1,10 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import {
-  ActivityIndicator,
   Image,
   Pressable,
   StyleSheet,
@@ -9,12 +13,14 @@ import {
 } from 'react-native';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MusicContext from '../../store/MusicContext';
-import {FONTS, COLORS} from '../Data/Dimentions';
+import {FONTS, COLORS, SIZES} from '../Data/Dimentions';
 import UserContext from '../../store/UserContext';
 import {setUserFavoritesApi} from '../../api/api';
 import {playerModesTrack} from '../Data/playerModes';
 import TrackPlayer, {usePlaybackState} from 'react-native-track-player';
-import { Songs as songsArray } from '../Data/Songs';
+import {Songs as songsArray} from '../Data/Songs';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import SheetContext from '../../store/SheetContext';
 const TrackComp = props => {
   const {
     isPlaying,
@@ -28,6 +34,8 @@ const TrackComp = props => {
     useContext(UserContext);
   const [heartShape, setHeartShape] = useState('heart-outline');
   const playbackState = usePlaybackState();
+  const {bottomSheetRef, setSheetOpen, setTitle, setTrack} =
+    useContext(SheetContext);
 
   useEffect(() => {
     isFavorite() ? setHeartShape('heart') : setHeartShape('heart-outline');
@@ -51,7 +59,9 @@ const TrackComp = props => {
   const AddNewSongSameCategory = () => {
     //filter songs
     let songsList = songsArray.filter(
-      a => a.Category.includes(props?.item?.Category[1]) && a.title !== props?.item.title,
+      a =>
+        a.Category.includes(props?.item?.Category[1]) &&
+        a.title !== props?.item.title,
     );
     TrackPlayer.add(songsList);
     playBack();
@@ -159,6 +169,13 @@ const TrackComp = props => {
     }
   };
 
+  const handleSnapPress = useCallback(index => {
+    bottomSheetRef.current?.snapToIndex(index);
+    setSheetOpen(true);
+    setTitle(props?.item?.title);
+    setTrack(props?.item);
+  }, []);
+
   const Favorite = async () => {
     setUserFavoritesApi(props?.item?.title, currentUserEmail)
       .then(val => {
@@ -178,12 +195,17 @@ const TrackComp = props => {
   };
   return (
     <View style={styles.TrackHolder}>
-      <Image
-        style={styles.image}
-        resizeMode="contain"
-        source={props?.item?.artwork}
-      />
-      <Text style={styles.title}>{checktitleLength(props?.item?.title)}</Text>
+      <TouchableOpacity
+        style={styles.sheetPress}
+        onPress={() => handleSnapPress(0)}>
+        <Image
+          style={styles.image}
+          resizeMode="contain"
+          source={props?.item?.artwork}
+        />
+        <Text style={styles.title}>{checktitleLength(props?.item?.title)}</Text>
+      </TouchableOpacity>
+
       <View style={styles.PressableHolder}>
         <Pressable style={styles.Pressable} onPress={() => Favorite()}>
           <IonIcon
@@ -205,8 +227,8 @@ const TrackComp = props => {
 
 const styles = StyleSheet.create({
   image: {
-    width: '30%',
-    height: 50,
+    width: SIZES.width * 0.21,
+    height: '100%',
     borderTopLeftRadius: 5,
     borderBottomLeftRadius: 5,
   },
@@ -218,23 +240,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(90, 90, 90, 0.3)',
     borderRadius: 5,
+    justifyContent: 'space-between',
   },
   title: {
     ...FONTS.h4,
     marginLeft: 5,
     alignSelf: 'center',
     color: COLORS.terkwaz,
+    width: SIZES.width * 0.29,
   },
   PressableHolder: {
     alignItems: 'flex-end',
-    marginLeft: 15,
     flexDirection: 'row',
-    // backgroundColor:"red",
-    flex: 1,
     justifyContent: 'flex-end',
+    width: SIZES.width * 0.2,
   },
   Pressable: {
     marginLeft: 10,
+  },
+  sheetPress: {
+    flexDirection: 'row',
+    borderRadius: 5,
+    width: SIZES.width * 0.5,
+    height: '100%',
   },
 });
 

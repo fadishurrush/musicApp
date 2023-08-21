@@ -6,6 +6,8 @@ const SheetProvider =props=>{
     const [sheetOpen, setSheetOpen] = useState(false);
     const [title, setTitle] = useState('');
     const [track, setTrack] = useState(null);
+    const [message, setMessage] = useState(null);
+    const [showMessage, setShowMessage] = useState(false);
     return(
         <SheetContext.Provider
         value={{
@@ -16,6 +18,10 @@ const SheetProvider =props=>{
             setTitle,
             track,
             setTrack,
+            message,
+            setMessage,
+            showMessage,
+            setShowMessage,
         }}>
             {props.children}
             </SheetContext.Provider>

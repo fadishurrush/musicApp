@@ -6,10 +6,11 @@ import MiniPlayer from "../Components/MiniPlayerComp";
 import BottomSheetComp from "../Components/BottomSheetComp";
 import { useContext } from "react";
 import SheetContext from "../../store/SheetContext";
+import MessageComp from "../Components/MessageComp";
 
 
 const AfterSplashScreen =()=>{
-  const {setSheetOpen,sheetOpen,bottomSheetRef , track , title} = useContext(SheetContext)
+  const {setSheetOpen,sheetOpen,bottomSheetRef , track , title,showMessage,message,setShowMessage,setMessage} = useContext(SheetContext)
 
   const params={
     bottomSheetComp:{
@@ -17,7 +18,9 @@ const AfterSplashScreen =()=>{
       sheetOpen:sheetOpen,
       setSheetOpen:setSheetOpen,
       track:track,
-      title:title
+      title:title,
+      setShowMessage:setShowMessage,
+      setMessage:setMessage,
     }
   }
     return(
@@ -28,6 +31,7 @@ const AfterSplashScreen =()=>{
             
             <View style={{flex: 1}}>
               <BottomTabNav />
+              {showMessage ? <MessageComp message={message} setShowMessage={setShowMessage}  /> : null}
               {context.currentTrack ? <MiniPlayer/> : null} 
               <BottomSheetComp  {...params.bottomSheetComp}/>
             </View>
