@@ -13,6 +13,7 @@ const SplashScreen = ({navigation}) => {
     }, 3000);
   }
   useEffect(() => {
+    timeout()
     SongsArray.length == 0
       ? GetAllSongs()
           .then(resJson => {
@@ -22,17 +23,15 @@ const SplashScreen = ({navigation}) => {
                 delete element['__v'];
                 SongsArray.push(element);
               });
-              timeout()
             } else {
               console.log('response was null');
-              timeout()
             }
           })
           .catch(e => {
-            timeout()
             console.log('fetch error , ', e);
           })
-      : timeout()
+      : null
+
   }, []);
   return (
     <View style={{flex: 1}}>

@@ -29,11 +29,13 @@ export const GetAllSongs = async () => {
 
 export const RegisterAccount = async (email, password) => {
   const url = urls.Register;
+
   const body = JSON.stringify({
     email: email.toLowerCase(),
     password: password,
   });
-  return await appFetch(url, 'POST', body, header);
+  let header = true
+  return await appFetch(url, 'POST', body,header);
 };
 
 export const setUserFavoritesApi = async (title, email) => {

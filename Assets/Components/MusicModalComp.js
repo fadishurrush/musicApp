@@ -12,7 +12,6 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import SliderComp from './SliderComp';
 import {COntroller} from './Controller';
 import {useContext} from 'react';
-import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
 import MusicContext from '../../store/MusicContext';
 
 const MusicModalComp = () => {

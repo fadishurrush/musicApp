@@ -53,6 +53,9 @@ const RegisterScreen = () => {
         }
       })
       .catch(e => {
+        setindicatorOn(false);
+        Alert.alert('register error please contact the support team' );
+
         console.log('register error', e);
       });
   };

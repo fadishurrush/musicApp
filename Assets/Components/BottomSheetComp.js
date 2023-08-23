@@ -1,5 +1,5 @@
 import {BottomSheetBackdrop, BottomSheetView} from '@gorhom/bottom-sheet';
-import React, {useContext, useRef} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import UserContext from '../../store/UserContext';
 import {StyleSheet, Text, View} from 'react-native';
@@ -26,6 +26,7 @@ const BottomSheetComp = props => {
     setUserFavorites,
   } = useContext(UserContext);
 
+
   const snapPoints = ['20%', '20%', '50%', '50%', '80%'];
 
   const isFavorite = () => {
@@ -38,7 +39,6 @@ const BottomSheetComp = props => {
     return 'heart-outline';
   };
   const makeFavorite = async () => {
-    console.log('clicked');
     setUserFavoritesApi(title, currentUserEmail)
       .then(() => {
         bottomSheetRef?.current.close();

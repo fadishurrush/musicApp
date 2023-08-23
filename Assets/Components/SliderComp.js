@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import TrackPlayer, {useProgress} from 'react-native-track-player';
+import { Songs as songsArray } from '../Data/Songs';
+import MusicContext from '../../store/MusicContext';
 
 const formatTime = secs => {
   let minutes = Math.floor(secs / 60);

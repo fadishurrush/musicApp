@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext} from 'react';
 import {
   FlatList,
   ImageBackground,
@@ -10,24 +10,22 @@ import {
 import HistoryComp from '../Components/HistoryComp';
 import {COLORS, FONTS} from '../Data/Dimentions';
 import UserContext from '../../store/UserContext';
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetView,
-} from '@gorhom/bottom-sheet';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {setUserFavoritesApi} from '../../api/api';
-import TrackPlayer from 'react-native-track-player';
-import BottomSheetComp, { bottomSheetRef } from '../Components/BottomSheetComp';
 import SheetContext from '../../store/SheetContext';
 
 const HistoryScreen = () => {
-  const {track,setTrack,title,setTitle,bottomSheetRef,sheetOpen,setSheetOpen}= useContext(SheetContext)
+  const {
+    setTrack,
+    title,
+    setTitle,
+    bottomSheetRef,
+    sheetOpen,
+    setSheetOpen,
+  } = useContext(SheetContext);
   const {history} = useContext(UserContext);
 
   const renderComp = song => (
     <HistoryComp track={song.item} index={song.index} {...params.historyComp} />
   );
-
 
   const renderItem = ({item}) => {
     const {Date, songs} = item;
@@ -75,14 +73,32 @@ const HistoryScreen = () => {
     ];
     var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     var date = new Date(val);
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth();
+    var todayDay = today.getDay();
     var y = date.getFullYear();
     var d = date.getDay();
     var m = date.getMonth();
     var UTC = date.getUTCDate();
 
-    // if()
-
-    return day[d] + ',' + month[m] + UTC + ',' + y;
+    if (checkDay(d, todayDay)) {
+      console.log('not yesterday');
+      return 'Today';
+    } else if (checkYesterday(d, todayDay)) {
+      console.log('yesterday');
+      return 'Yesterday';
+    } else {
+      return day[d] + ',' + month[m] + UTC + ',' + y;
+    }
+  };
+  const checkDay = (latestDay, currentDay) => {
+    return currentDay == latestDay ? true : false;
+  };
+  const checkYesterday = (latestDay, currentDay) => {
+    console.log('currentDay ', currentDay);
+    console.log('latestDay ', latestDay);
+    return currentDay == latestDay - 1 ? true : false;
   };
 
   return (
@@ -91,9 +107,8 @@ const HistoryScreen = () => {
       source={require('../BackGroundImages/Dark-background.jpg')}>
       {history && history.length > 0 ? (
         [<FlatList {...params.FlatList} />]
-
       ) : (
-        <Text style={{textAlign: 'center', color: 'black'}}>
+        <Text style={styles.emptyText}>
           No music have been played on this account
         </Text>
       )}
@@ -150,6 +165,12 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginHorizontal: 10,
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: 'gray',
+    marginTop: '30%',
+    ...FONTS.h2,
   },
 });
 
