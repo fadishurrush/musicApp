@@ -13,7 +13,7 @@ import {Songs as songsArray} from '../Data/Songs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const TrackScreen = ({route, navigation}) => {
-  const [songs, setSongs] = useState(songsArray);
+  const [songs, setSongs] = useState([]);
   const {item} = route?.params || {};
 
   useEffect(() => {
