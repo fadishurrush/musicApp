@@ -38,7 +38,6 @@ const TrackComp = props => {
     useContext(SheetContext);
 
   useEffect(() => {
-    console.log("title ",props.item.title);
     isFavorite() ? setHeartShape('heart') : setHeartShape('heart-outline');
   });
 

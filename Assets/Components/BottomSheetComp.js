@@ -1,5 +1,5 @@
 import {BottomSheetBackdrop, BottomSheetView} from '@gorhom/bottom-sheet';
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import UserContext from '../../store/UserContext';
 import {StyleSheet, Text, View} from 'react-native';
@@ -25,9 +25,9 @@ const BottomSheetComp = props => {
     currentUserEmail,
     setUserFavorites,
   } = useContext(UserContext);
+  const [saveOpen, setSaveOpen] = useState(false);
 
-
-  const snapPoints = ['20%', '20%', '50%', '50%', '80%'];
+  const snapPoints = ['30%', '30%', '50%', '50%', '80%'];
 
   const isFavorite = () => {
     for (let index = 0; index < userFavorites.length; index++) {
@@ -70,6 +70,47 @@ const BottomSheetComp = props => {
       setShowMessage(true);
     });
   };
+  const createNewPlaylist=()=>{
+    console.log("hello world :D");
+  }
+  // opens the save options bottom sheet
+  const openSaveOptions = () => {
+    const op={
+      title:"new playlist",
+      icon:"add" ,
+      action: () => createNewPlaylist() ,
+    }
+    return (
+      optionComp({op})
+    )
+  }
+  // the main option layout component | Fav | save | Add to Queue
+  const optionComp = props => {
+    const {i, op} = props;
+    return (
+      <View key={i} style={[styles.options]}>
+        <TouchableOpacity
+          key={i}
+          onPress={op.action}
+          style={[
+            styles.container,
+            {
+              // borderBottomWidth: i === options.length - 1 ? 0 : 1,
+              borderTopRightRadius: i == 0 ? 10 : 0,
+              borderTopLeftRadius: i == 0 ? 10 : 0,
+            },
+          ]}>
+          <IonIcon
+            style={styles.icon}
+            name={op.icon}
+            size={25}
+            color={'grey'}
+          />
+          <Text style={styles.optionsText}>{op.title}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   const options = [
     {
@@ -80,7 +121,7 @@ const BottomSheetComp = props => {
     {
       title: 'save',
       icon: 'save-outline',
-      action: () => makeFavorite(),
+      action: () => setSaveOpen(true),
     },
     {
       title: 'Add to Queue',
@@ -93,7 +134,7 @@ const BottomSheetComp = props => {
     bottomSheet: {
       ref: bottomSheetRef,
       snapPoints: snapPoints,
-      onClose: () => setSheetOpen(false),
+      onClose: () => {setSheetOpen(false) ,setSaveOpen(false)},
       enablePanDownToClose: true,
       backgroundStyle: styles.bottomSheet,
       backdropComponent: backdropProps => (
@@ -113,29 +154,10 @@ const BottomSheetComp = props => {
       </BottomSheetView>
       <BottomSheetView style={{flex: 1}}>
         {/* {optionsComp()} */}
-        {options.map((op, i) => (
-          <View key={i} style={[styles.options]}>
-            <TouchableOpacity
-              key={i}
-              onPress={op.action}
-              style={[
-                styles.container,
-                {
-                  // borderBottomWidth: i === options.length - 1 ? 0 : 1,
-                  borderTopRightRadius: i == 0 ? 10 : 0,
-                  borderTopLeftRadius: i == 0 ? 10 : 0,
-                },
-              ]}>
-              <IonIcon
-                style={styles.icon}
-                name={op.icon}
-                size={25}
-                color={'grey'}
-              />
-              <Text style={styles.optionsText}>{op.title}</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+
+        {saveOpen
+          ? openSaveOptions()
+          : options.map((op, i) => optionComp({i, op}))}
       </BottomSheetView>
       {/* {sheetOpen? optionsComp() : null} */}
     </BottomSheet>
