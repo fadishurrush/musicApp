@@ -31,7 +31,7 @@ const HistoryScreen = () => {
     const {Date, songs} = item;
 
     return (
-      <View>
+      <View >
         <Text style={styles.TextDate}>{extractDate(Date)}</Text>
         <FlatList data={songs} {...params.compFlatlist} />
       </View>
@@ -41,10 +41,12 @@ const HistoryScreen = () => {
     FlatList: {
       data: history,
       renderItem: renderItem,
+      // keyExtractor: item => `${item?.Date}`
     },
     compFlatlist: {
       style: {flex: 1},
       renderItem: renderComp,
+      keyExtractor: item => `${item?._id}`,
     },
     historyComp: {
       title: title,

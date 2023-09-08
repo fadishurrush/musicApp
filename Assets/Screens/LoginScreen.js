@@ -48,8 +48,6 @@ const LoginScreen = () => {
 
 
   const Login = async () => {
-    //TODO:
-    //      make out side functions
 
     let valedationError = inputValidationError();
     if (valedationError) {
