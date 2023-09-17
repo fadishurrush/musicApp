@@ -11,4 +11,6 @@ export const urls = {
   AccountRecover: baseurl + '/AccountRecover',
   getHistory:(email)=> `${baseurl}/getHistory${email}`,
   addHistory: baseurl+'/addHistory',
+  getPlaylists:(email)=> `${baseurl}/getPlaylists${email}`,
+  addPlaylist: baseurl+'/addPlaylists',
 };

@@ -6,6 +6,7 @@ const UserProvider = props => {
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
   const [userFavorites, setUserFavorites] = useState([]);
   const [history,setHistory]= useState([]);
+  const [playlists,setPlaylists]= useState([]);
 
 
 
@@ -17,7 +18,9 @@ const UserProvider = props => {
         userFavorites,
         setUserFavorites,
         history,
-        setHistory
+        setHistory,
+        playlists,
+        setPlaylists
       }}>
       {props.children}
     </UserContext.Provider>

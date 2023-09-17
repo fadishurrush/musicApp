@@ -22,7 +22,7 @@ const LoginScreen = () => {
   const [password, setpassword] = useState('');
   const [isSecured, setIsSecured] = useState(true);
   const [indicatorOn, setindicatorOn] = useState(false);
-  const {setCurrentUserEmail, setUserFavorites,setHistory} = useContext(UserContext);
+  const {setCurrentUserEmail, setUserFavorites,setHistory,setPlaylists} = useContext(UserContext);
   const navigation = useNavigation();
   const recover = () => {
     navigation.navigate(ScreenNames.Recover);
@@ -63,9 +63,10 @@ const LoginScreen = () => {
           return;
         }
         const user = resJson.user
-        setCurrentUserEmail(user.email)
-        setUserFavorites(user.Favorites)
-        setHistory(user.History)
+        setCurrentUserEmail(user?.email)
+        setUserFavorites(user?.Favorites)
+        setHistory(user?.History)
+        setPlaylists(user?.Playlists)
         navigation.replace(ScreenNames.AfterSplashScreen)
 
       })

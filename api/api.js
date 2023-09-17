@@ -65,3 +65,20 @@ export const addHistoryFromApi = async (email,newHistory) => {
 
     return await appFetch(url,'POST',body,header);
   };
+
+  export const getPlaylistsFromApi = async email => {
+    const url = urls.getPlaylists(email);
+    return await appFetch(url);
+  };
+  
+  export const addPlaylistsFromApi = async (email,playlist) => {
+      const url = urls.addPlaylist
+      const body = JSON.stringify({
+          email:email.toLowerCase(),
+          PlayList:playlist
+      })
+  
+      let header = true
+  
+      return await appFetch(url,'POST',body,header);
+    };

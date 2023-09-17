@@ -1,13 +1,22 @@
 import {BottomSheetBackdrop, BottomSheetView} from '@gorhom/bottom-sheet';
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import UserContext from '../../store/UserContext';
-import {StyleSheet, Text, View} from 'react-native';
-import {COLORS, FONTS} from '../Data/Dimentions';
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Button,
+  BackHandler,
+} from 'react-native';
+import {COLORS, FONTS, SIZES} from '../Data/Dimentions';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import BottomSheet from '@gorhom/bottom-sheet';
 import TrackPlayer, {State} from 'react-native-track-player';
-import {setUserFavoritesApi} from '../../api/api';
+import {addPlaylistsFromApi, setUserFavoritesApi} from '../../api/api';
+import MusicContext from '../../store/MusicContext';
 
 const BottomSheetComp = props => {
   const {
@@ -17,18 +26,28 @@ const BottomSheetComp = props => {
     bottomSheetRef,
     track,
     title,
+    sheetOpen,
   } = props;
-  const {
-    userFavorites,
-    userPlaylists,
-    setUserPlaylists,
-    currentUserEmail,
-    setUserFavorites,
-  } = useContext(UserContext);
-  const [saveOpen, setSaveOpen] = useState(false);
+  const {userFavorites, playlists, currentUserEmail, setUserFavorites} =
+    useContext(UserContext);
+  const {setCurrentTrack} = useContext(MusicContext);
+  const [state, setState] = useState('default');
+  const [playlistName, setPlaylistName] = useState('');
 
   const snapPoints = ['30%', '30%', '50%', '50%', '80%'];
 
+  useEffect(() => {
+    const backAction = () => {
+      bottomSheetRef.current.close();
+      backHandler.remove()
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+  }, [sheetOpen]);
   const isFavorite = () => {
     for (let index = 0; index < userFavorites.length; index++) {
       const element = userFavorites[index];
@@ -61,7 +80,10 @@ const BottomSheetComp = props => {
 
   const addToQueue = async () => {
     const state = await TrackPlayer.getState();
-
+    const queue = await TrackPlayer.getQueue();
+    if (queue.length == 0) {
+      setCurrentTrack(track);
+    }
     await TrackPlayer.add(track).then(async () => {
       state == State.Playing ? await TrackPlayer.play() : null;
       bottomSheetRef?.current.close();
@@ -70,20 +92,63 @@ const BottomSheetComp = props => {
       setShowMessage(true);
     });
   };
-  const createNewPlaylist=()=>{
-    console.log("hello world :D");
-  }
+
+  const addToPlaylist = async name => {
+    const playlist = playlists.find(playlist => playlist.name === name);
+    const index = playlist?.songs?.findIndex(song => song.title === title);
+    if (index > -1) {
+      playlist?.songs?.splice(index, 1);
+      setMessage('song removed from playlist');
+    } else {
+      playlist?.songs.push(track);
+      setMessage('song added to playlist');
+    }
+    await addPlaylistsFromApi(
+      currentUserEmail,
+      songObject(playlist.name, playlist.songs),
+    )
+      .then(() => {
+        bottomSheetRef?.current.close();
+        setSheetOpen(false);
+        setShowMessage(true);
+      })
+      .catch(e => {
+        console.log('add history error ->', e);
+      });
+  };
+
+  const songObject = (name, songs) => {
+    const obj = {
+      name: name,
+      songs: songs,
+    };
+    return obj;
+  };
+
+  const createNewPlaylist = () => {
+    setState('newPlaylist');
+  };
   // opens the save options bottom sheet
   const openSaveOptions = () => {
-    const op={
-      title:"new playlist",
-      icon:"add" ,
-      action: () => createNewPlaylist() ,
-    }
+    const op = {
+      title: 'new playlist',
+      icon: 'add',
+      action: () => createNewPlaylist(),
+    };
     return (
-      optionComp({op})
-    )
-  }
+      <View>
+        {optionComp({op})}
+        {playlists?.map((playlist, i) => {
+          var op = {
+            title: playlist?.name,
+            icon: 'list-outline',
+            action: () => addToPlaylist(playlist?.name),
+          };
+          return optionComp({op, i});
+        })}
+      </View>
+    );
+  };
   // the main option layout component | Fav | save | Add to Queue
   const optionComp = props => {
     const {i, op} = props;
@@ -121,7 +186,7 @@ const BottomSheetComp = props => {
     {
       title: 'save',
       icon: 'save-outline',
-      action: () => setSaveOpen(true),
+      action: () => setState('save'),
     },
     {
       title: 'Add to Queue',
@@ -134,7 +199,9 @@ const BottomSheetComp = props => {
     bottomSheet: {
       ref: bottomSheetRef,
       snapPoints: snapPoints,
-      onClose: () => {setSheetOpen(false) ,setSaveOpen(false)},
+      onClose: () => {
+        setSheetOpen(false), setState('default');
+      },
       enablePanDownToClose: true,
       backgroundStyle: styles.bottomSheet,
       backdropComponent: backdropProps => (
@@ -147,6 +214,34 @@ const BottomSheetComp = props => {
     },
   };
 
+  const showCreatePlaylist = () => {
+    return (
+      <View style={{flex: 1}}>
+        <TextInput
+          placeholderTextColor={COLORS.darkerterkwaz}
+          onChangeText={setPlaylistName}
+          value={playlistName}
+          style={styles.input}
+          placeholder="Name..."
+        />
+        <Button title="done" onPress={() => bottomSheetRef?.current.close()} />
+      </View>
+    );
+  };
+
+  const optionsSort = key => {
+    switch (key) {
+      case 'default':
+        return options.map((op, i) => optionComp({i, op}));
+
+      case 'save':
+        return openSaveOptions();
+
+      case 'newPlaylist':
+        return showCreatePlaylist();
+    }
+  };
+
   return (
     <BottomSheet index={-1} {...params.bottomSheet}>
       <BottomSheetView style={{borderBottomWidth: 1, width: '100%'}}>
@@ -155,11 +250,8 @@ const BottomSheetComp = props => {
       <BottomSheetView style={{flex: 1}}>
         {/* {optionsComp()} */}
 
-        {saveOpen
-          ? openSaveOptions()
-          : options.map((op, i) => optionComp({i, op}))}
+        {optionsSort(state)}
       </BottomSheetView>
-      {/* {sheetOpen? optionsComp() : null} */}
     </BottomSheet>
   );
 };
@@ -213,6 +305,30 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginHorizontal: 10,
+  },
+  input: {
+    fontSize: 20,
+    padding: 15,
+    marginLeft: 10,
+    width: '90%',
+    marginTop: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.5,
+        shadowRadius: 6,
+        shadowOffset: {
+          width: 0,
+          height: 4,
+        },
+      },
+      android: {
+        elevation: 3.5,
+      },
+    }),
+    borderRadius: 4,
+    marginRight: '2%',
+    marginLeft: '2%',
   },
 });
 

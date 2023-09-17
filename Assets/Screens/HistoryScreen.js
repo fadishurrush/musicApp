@@ -85,10 +85,8 @@ const HistoryScreen = () => {
     var UTC = date.getUTCDate();
 
     if (checkDay(d, todayDay)) {
-      console.log('not yesterday');
       return 'Today';
     } else if (checkYesterday(d, todayDay)) {
-      console.log('yesterday');
       return 'Yesterday';
     } else {
       return day[d] + ',' + month[m] + UTC + ',' + y;
@@ -98,8 +96,7 @@ const HistoryScreen = () => {
     return currentDay == latestDay ? true : false;
   };
   const checkYesterday = (latestDay, currentDay) => {
-    console.log('currentDay ', currentDay);
-    console.log('latestDay ', latestDay);
+
     return currentDay == latestDay - 1 ? true : false;
   };
 
